@@ -1,0 +1,13 @@
+root: true
+extends:
+  - remcohaszing
+  - remcohaszing/typechecking
+rules:
+  '@typescript-eslint/no-unsafe-assignment': off
+
+  import/extensions: off
+  import/no-unresolved: off
+
+  jsdoc/require-jsdoc: off
+
+  node/no-unsupported-features/node-builtins: off

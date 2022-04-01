@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" type="image/svg+xml" href="<%= require('./icon.svg') %>" />
+    <title>Monaco Tailwindcss</title>
+  </head>
+  <body>
+    <nav class="navbar">
+      <h1>Monaco Tailwindcss</h1>
+      <div>
+        <a href="https://npmjs.com/package/monaco-tailwindcss" class="nav-icon">
+          <img
+            alt="npm icon"
+            src="<%= require('@fortawesome/fontawesome-free/svgs/brands/npm.svg') %>"
+          />
+        </a>
+        <a href="https://github.com/remcohaszing/monaco-tailwindcss" class="nav-icon">
+          <img
+            alt="GitHub icon"
+            src="<%= require('@fortawesome/fontawesome-free/svgs/brands/github.svg') %>"
+          />
+        </a>
+      </div>
+    </nav>
+    <main class="editor-wrapper">
+      <nav class="tabs">
+        <a href="#css">css</a>
+        <a href="#html">html</a>
+        <a href="#mdx">mdx</a>
+      </nav>
+      <div id="editor"></div>
+    </div>
+  </body>
+</html>
