@@ -1,3 +1,4 @@
+import type * as Monaco from 'monaco-editor'
 import { editor, languages, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
@@ -17,7 +18,7 @@ export interface MonacoTailwindcssOptions {
 // 2min
 const STOP_WHEN_IDLE_FOR = 2 * 60 * 1000;
 
-export function createWorkerManager(createData: MonacoTailwindcssOptions): WorkerAccessor {
+export function createWorkerManager(monaco: typeof Monaco, createData: MonacoTailwindcssOptions): WorkerAccessor {
   let worker: editor.MonacoWebWorker<TailwindcssWorker> | undefined;
   let client: Promise<TailwindcssWorker> | undefined;
   let lastUsedTime = 0;
@@ -47,7 +48,7 @@ export function createWorkerManager(createData: MonacoTailwindcssOptions): Worke
     lastUsedTime = Date.now();
 
     if (!client) {
-      worker = editor.createWebWorker<TailwindcssWorker>({
+      worker = monaco.editor.createWebWorker<TailwindcssWorker>({
         moduleId: 'monaco-tailwindcss',
         label: 'tailwindcss',
         createData,

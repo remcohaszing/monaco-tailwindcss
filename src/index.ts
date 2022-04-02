@@ -22,7 +22,7 @@ export function configureMonacoTailwindcss(monaco: typeof Monaco | undefined = w
     return;
   }
 
-  const getWorker = createWorkerManager({ config });
+  const getWorker = createWorkerManager(monaco, { config });
 
   const disposables = [
     monaco.languages.registerColorProvider(languageSelector, createColorProvider(getWorker)),
