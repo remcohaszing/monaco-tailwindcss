@@ -1,6 +1,7 @@
 import './index.css';
 import { editor, Environment, languages } from 'monaco-editor';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss/src';
+import * as monaco from 'monaco-editor';
+import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
 
 declare global {
   interface Window {
@@ -8,7 +9,7 @@ declare global {
   }
 }
 
-configureMonacoTailwindcss();
+configureMonacoTailwindcss(monaco);
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {

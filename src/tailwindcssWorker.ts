@@ -11,9 +11,9 @@ import {
   resolveCompletionItem,
   State,
 } from 'tailwindcss-language-service';
-import expandApplyAtRules from 'tailwindcss/lib/lib/expandApplyAtRules.js';
-import { generateRules } from 'tailwindcss/lib/lib/generateRules.js';
-import { createContext } from 'tailwindcss/lib/lib/setupContextUtils.js';
+import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
+import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
+import { createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 import resolveConfig from 'tailwindcss/resolveConfig.js';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { Promisable } from 'type-fest';

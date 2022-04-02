@@ -1,4 +1,11 @@
-import { IDisposable, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { IDisposable } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import type * as Monaco from 'monaco-editor'
+
+declare global {
+  interface Window {
+    monaco?: typeof Monaco
+  }
+}
 
 import {
   createColorProvider,
@@ -9,19 +16,21 @@ import { createWorkerManager, MonacoTailwindcssOptions } from './workerManager';
 
 export const defaultLanguageSelector = ['javascript', 'html', 'mdx', 'typescript'] as const;
 
-export function configureMonacoTailwindcss({
-  config,
-  languageSelector = defaultLanguageSelector,
-}: MonacoTailwindcssOptions = {}): IDisposable {
+export function configureMonacoTailwindcss(monaco: typeof Monaco | undefined = window.monaco, {config, languageSelector = defaultLanguageSelector,}: MonacoTailwindcssOptions = {}): IDisposable | void {
+  if (!monaco) {
+    console.error("monaco not defined");
+    return;
+  }
+
   const getWorker = createWorkerManager({ config });
 
   const disposables = [
-    languages.registerColorProvider(languageSelector, createColorProvider(getWorker)),
-    languages.registerCompletionItemProvider(
+    monaco.languages.registerColorProvider(languageSelector, createColorProvider(getWorker)),
+    monaco.languages.registerCompletionItemProvider(
       languageSelector,
       createCompletionItemProvider(getWorker),
     ),
-    languages.registerHoverProvider(languageSelector, createHoverProvider(getWorker)),
+    monaco.languages.registerHoverProvider(languageSelector, createHoverProvider(getWorker)),
   ];
 
   return {
