@@ -19,25 +19,6 @@ build({
   minify: true
 });
 
-const replaceNodeBuiltIns = () => {
-  const replace = {
-    'path': require.resolve('path-browserify'),
-    'fs': require.resolve('./src/mocked/fs.cjs'),
-    'util': require.resolve('./src/mocked/util.cjs'),
-    'url': require.resolve('url/'),
-    'vscode-emmet-helper-bundled': require.resolve('./src/mocked/noop.cjs')
-  }
-  const filter = RegExp(`^(${Object.keys(replace).join("|")})$`);
-  return {
-    name: "replaceNodeBuiltIns",
-    setup(build) {
-      build.onResolve({ filter }, arg => ({
-        path: replace[arg.path],
-      }));
-    },
-  };
-}
-
 build({
   watch: true,
   entryPoints: [require.resolve('monaco-tailwindcss/src/tailwindcss.worker.ts')],
@@ -56,7 +37,22 @@ build({
     '__filename': '"/index.js"',
   },
   plugins: [
-    replaceNodeBuiltIns()
+    {
+      name: 'alias',
+      setup({ onResolve }) {
+        const replace = {
+          'path': require.resolve('path-browserify'),
+          'fs': require.resolve('./src/mocked/fs.cjs'),
+          'util': require.resolve('./src/mocked/util.cjs'),
+          'url': require.resolve('url/'),
+          'vscode-emmet-helper-bundled': require.resolve('./src/mocked/noop.cjs')
+        }
+        const filter = RegExp(`^(${Object.keys(replace).join('|')})$`);
+        onResolve({ filter }, ({ path }) => ({
+          path: replace[path],
+        }));
+      },
+    }
   ],
 });
 
@@ -73,8 +69,8 @@ serve({
     js: `
         (function () {
             const link = document.createElement('link')
-            link.rel = "stylesheet"
-            link.href = (new URL("index.css", import.meta.url)).pathname
+            link.rel = 'stylesheet'
+            link.href = (new URL('index.css', import.meta.url)).pathname
             document.head.append(link)
         })();
     `,
@@ -96,7 +92,7 @@ function build(opts) {
     if (result.warnings.length > 0) {
       console.error(result.warnings);
     }
-    console.info("build done")
+    console.info('build done')
   });
 }
 
@@ -110,7 +106,7 @@ function serve(opts) {
     host: '127.0.0.1'
   },opts).then((result) => {
     const {host, port} = result;
-    console.info("serve done")
+    console.info('serve done')
     console.log(`open: http://${host}:${port}`)
   });
 }
