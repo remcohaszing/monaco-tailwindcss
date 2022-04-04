@@ -47,22 +47,6 @@ await build({
         onResolve({ filter: /^url$/ }, ({ path, ...options }) =>
           resolve('url/', options)
         );
-
-        // Todo
-        // // The main prettier entry point contains all of Prettier.
-        // // The standalone bundle is smaller and works fine for us.
-        // onResolve({ filter: /^prettier/ }, ({ path }) => ({
-        //   path: path === 'prettier' ? 'prettier/standalone.js' : `${path}.js`,
-        //   external: true,
-        //   sideEffects: false,
-        // }));
-
-        // Todo keep this?
-        // The language server dependencies tend to write both ESM and UMD output alongside each
-        // other, then use UMD for imports. We prefer ESM.
-        onResolve({ filter: /\/umd\// }, ({ path, ...options }) =>
-          resolve(path.replace(/\/umd\//, '/esm/'), options),
-        );
         onResolve({ filter: /.*/ }, () => ({ sideEffects: false }));
       },
     },

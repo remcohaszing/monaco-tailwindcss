@@ -3,27 +3,20 @@ const path = require('path');
 
 const outputDir = path.join(__dirname, './dist')
 
-const workerEntryPoints = [
-  'language/json/json.worker.js',
-  'language/css/css.worker.js',
-  'language/html/html.worker.js',
-  'language/typescript/ts.worker.js',
-  'editor/editor.worker.js'
-];
-
+// build the workers
 build({
-  entryPoints: workerEntryPoints.map(entry => require.resolve(`monaco-editor/esm/vs/${entry}`)),
+  entryPoints: Object.fromEntries(Object.entries({
+    'json.worker': 'monaco-editor/esm/vs/language/json/json.worker.js',
+    'css.worker': 'monaco-editor/esm/vs/language/css/css.worker.js',
+    'html.worker': 'monaco-editor/esm/vs/language/html/html.worker.js',
+    'ts.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker.js',
+    'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
+    'tailwindcss.worker': 'monaco-tailwindcss/tailwindcss.worker.js'
+  }).map(([outfile, entry]) => [outfile, require.resolve(entry)])),
   outdir: outputDir,
-  bundle: true,
   format: 'iife',
+  bundle: true,
   minify: true
-});
-
-build({
-  entryPoints: [require.resolve('monaco-tailwindcss/tailwindcss.worker.js')],
-  outfile: path.join(outputDir, 'monaco-tailwindcss/tailwindcss.worker.js'),
-  bundle: true,
-  format: 'iife',
 });
 
 // change this to `build()` for building.
@@ -34,17 +27,6 @@ serve({
   format: 'esm',
   // format: 'iife', // then we must use document.currentScript.src instead of import.meta.src
   // splitting: true, // optional and only works for esm
-  banner: {
-    // dirtily injects the style.css - todo find a better way.
-    js: `
-        (function () {
-            const link = document.createElement('link')
-            link.rel = 'stylesheet'
-            link.href = (new URL('index.css', import.meta.url)).pathname
-            document.head.append(link)
-        })();
-    `,
-  },
   outdir: outputDir,
   loader: {
     '.ttf': 'file'
