@@ -20,40 +20,10 @@ build({
 });
 
 build({
-  watch: true,
-  entryPoints: [require.resolve('monaco-tailwindcss/src/tailwindcss.worker.ts')],
+  entryPoints: [require.resolve('monaco-tailwindcss/tailwindcss.worker.js')],
   outfile: path.join(outputDir, 'monaco-tailwindcss/tailwindcss.worker.js'),
   bundle: true,
-  sourcemap: 'inline',
   format: 'iife',
-  minify: false,
-  define: {
-    'process.env.DEBUG': 'undefined',
-    'process.env.NODE_DEBUG': 'undefined',
-    'process.env.JEST_WORKER_ID': 'undefined',
-    'process.env.TAILWIND_MODE': JSON.stringify('build'),
-    'process.env.TAILWIND_DISABLE_TOUCH': 'true',
-    '__dirname': '"/"',
-    '__filename': '"/index.js"',
-  },
-  plugins: [
-    {
-      name: 'alias',
-      setup({ onResolve }) {
-        const replace = {
-          'path': require.resolve('path-browserify'),
-          'fs': require.resolve('./src/mocked/fs.cjs'),
-          'util': require.resolve('./src/mocked/util.cjs'),
-          'url': require.resolve('url/'),
-          'vscode-emmet-helper-bundled': require.resolve('./src/mocked/noop.cjs')
-        }
-        const filter = RegExp(`^(${Object.keys(replace).join('|')})$`);
-        onResolve({ filter }, ({ path }) => ({
-          path: replace[path],
-        }));
-      },
-    }
-  ],
 });
 
 // change this to `build()` for building.
