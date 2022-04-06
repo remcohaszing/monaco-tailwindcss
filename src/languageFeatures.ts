@@ -1,9 +1,12 @@
 import { fromRatio, names as namedColors } from '@ctrl/tinycolor';
 import { editor, IPosition, IRange, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { WorkerGetter } from 'monaco-worker-manager';
 import { CompletionContext, CompletionTriggerKind } from 'vscode-languageserver-protocol';
 import * as ls from 'vscode-languageserver-types';
 
-import { WorkerAccessor } from './workerManager';
+import { TailwindcssWorker } from './tailwindcss.worker';
+
+type WorkerAccessor = WorkerGetter<TailwindcssWorker>;
 
 function lsRangeToMonacoRange(range: ls.Range): IRange {
   return {
