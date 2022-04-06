@@ -34,6 +34,7 @@
   "homepage": "https://github.com/remcohaszing/monaco-tailwindcss#readme",
   "dependencies": {
     "@ctrl/tinycolor": "^3.0.0",
+    "monaco-worker-manager": "^1.0.0",
     "tmp-cache": "^1.0.0",
     "type-fest": "^2.0.0",
     "vscode-languageserver-protocol": "^3.0.0",
