@@ -2,13 +2,19 @@
   "name": "monaco-tailwindcss",
   "version": "0.0.0",
   "description": "Tailwindcss integration for Monaco editor",
-  "main": "index.js",
+  "files": [
+    "index.js",
+    "index.js.map",
+    "index.d.ts",
+    "tailwindcss.worker.js",
+    "tailwindcss.worker.js.map"
+  ],
   "type": "module",
   "workspaces": [
     "examples/*"
   ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepack": "node build.js"
   },
   "repository": {
     "type": "git",
@@ -28,14 +34,8 @@
   "homepage": "https://github.com/remcohaszing/monaco-tailwindcss#readme",
   "dependencies": {
     "@ctrl/tinycolor": "^3.0.0",
-    "path-browserify": "^1.0.0",
-    "postcss": "8.3.9",
-    "postcss-selector-parser": "6.0.2",
-    "tailwindcss": "^3.0.0",
-    "tailwindcss-language-service": "0.0.23",
     "tmp-cache": "^1.0.0",
     "type-fest": "^2.0.0",
-    "url": "^0.11.0",
     "vscode-languageserver-protocol": "^3.0.0",
     "vscode-languageserver-textdocument": "^1.0.0",
     "vscode-languageserver-types": "^3.0.0"
@@ -44,10 +44,16 @@
     "monaco-editor": ">=0.30"
   },
   "devDependencies": {
+    "path-browserify": "^1.0.0",
+    "url": "^0.11.0",
     "@types/tailwindcss": "^3.0.0",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "eslint": "^8.0.0",
     "eslint-config-remcohaszing": "^3.0.0",
-    "prettier": "^2.0.0"
+    "prettier": "^2.0.0",
+    "tailwindcss": "^3.0.0",
+    "tailwindcss-language-service": "0.0.23",
+    "postcss": "8.3.9",
+    "postcss-selector-parser": "6.0.2"
   }
 }

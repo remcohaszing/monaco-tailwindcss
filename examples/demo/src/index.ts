@@ -1,6 +1,6 @@
 import './index.css';
 import { editor, Environment, languages } from 'monaco-editor';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss/src';
+import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
 
 declare global {
   interface Window {
@@ -24,7 +24,7 @@ window.MonacoEnvironment = {
           new URL('monaco-editor/esm/vs/language/html/html.worker.js', import.meta.url),
         );
       case 'tailwindcss':
-        return new Worker(new URL('../../../src/tailwindcss.worker.ts', import.meta.url));
+        return new Worker(new URL('monaco-tailwindcss/tailwindcss.worker.js', import.meta.url));
       default:
         throw new Error(`Unknown label ${label}`);
     }
