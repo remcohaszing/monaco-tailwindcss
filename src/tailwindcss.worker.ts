@@ -26,6 +26,11 @@ import {
   Hover,
   Position,
 } from 'vscode-languageserver-types';
+import getVariants from './getVariants.js'
+
+function isObject(value: any): value is object {
+  return Object.prototype.toString.call(value) === '[object Object]'
+}
 
 export interface TailwindcssWorker {
   doComplete: (
@@ -72,7 +77,8 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
 
     jit: true,
     jitContext,
-    variants: {},
+    separator: ':',
+    screens: isObject(config.theme.screens) ? Object.keys(config.theme.screens) : [],
     editor: {
       userLanguages: {},
       // @ts-expect-error this is poorly typed
@@ -97,6 +103,8 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       },
     },
   };
+
+  state.variants = getVariants(state);
 
   state.classList = jitContext
     .getClassList()
