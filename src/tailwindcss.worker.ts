@@ -26,10 +26,11 @@ import {
   Hover,
   Position,
 } from 'vscode-languageserver-types';
-import getVariants from './getVariants.js'
+
+import getVariants from './getVariants.js';
 
 function isObject(value: any): value is object {
-  return Object.prototype.toString.call(value) === '[object Object]'
+  return Object.prototype.toString.call(value) === '[object Object]';
 }
 
 export interface TailwindcssWorker {
