@@ -20,8 +20,8 @@ await build({
     'process.env.JEST_WORKER_ID': 'undefined',
     'process.env.TAILWIND_MODE': JSON.stringify('build'),
     'process.env.TAILWIND_DISABLE_TOUCH': 'true',
-    '__dirname': '"/"',
-    '__filename': '"/index.js"',
+    __dirname: '"/"',
+    __filename: '"/index.js"',
   },
   plugins: [
     {
@@ -40,13 +40,11 @@ await build({
           sideEffects: false,
         }));
 
-        // will be external depending on `external` above
+        // Will be external depending on `external` above
         onResolve({ filter: /^path$/ }, ({ path, ...options }) =>
-          resolve('path-browserify', options)
+          resolve('path-browserify', options),
         );
-        onResolve({ filter: /^url$/ }, ({ path, ...options }) =>
-          resolve('url/', options)
-        );
+        onResolve({ filter: /^url$/ }, ({ path, ...options }) => resolve('url/', options));
         onResolve({ filter: /.*/ }, () => ({ sideEffects: false }));
       },
     },

@@ -1,6 +1,3 @@
 dist/
-node_modules/
 /index.js
 /tailwindcss.worker.js
-*.map
-*.tgz

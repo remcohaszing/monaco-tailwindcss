@@ -11,10 +11,10 @@ import {
   resolveCompletionItem,
   State,
 } from 'tailwindcss-language-service';
+import resolveConfig from 'tailwindcss/resolveConfig.js';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
 import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
 import { createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
-import resolveConfig from 'tailwindcss/resolveConfig.js';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { Promisable } from 'type-fest';
 import { CompletionContext } from 'vscode-languageserver-protocol';

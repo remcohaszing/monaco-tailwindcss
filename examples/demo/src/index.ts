@@ -1,6 +1,6 @@
 import './index.css';
 import { editor, Environment, languages } from 'monaco-editor';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss/src';
+import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
 
 declare global {
   interface Window {

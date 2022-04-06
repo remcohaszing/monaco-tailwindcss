@@ -31,8 +31,5 @@ export default {
   optimization: {
     minimizer: ['...', new CssMinimizerPlugin()],
   },
-  plugins: [
-    new HtmlWebPackPlugin(),
-    new MiniCssExtractPlugin({ filename: '[contenthash].css' }),
-  ],
+  plugins: [new HtmlWebPackPlugin(), new MiniCssExtractPlugin({ filename: '[contenthash].css' })],
 };
