@@ -7,9 +7,8 @@ function isAtRule(node: Node): node is AtRule {
 
 export default function getVariants(state: JitState): Record<string, string | null> {
   function escape(className: string): string {
-    const node = state.modules.postcssSelectorParser.module.className();
-    node.value = className;
-    return node.raws?.value ?? node.value;
+    const node = state.modules.postcssSelectorParser.module.className({value: className});
+    return node.value;
   }
 
   const result: Record<string, string | null> = {};
