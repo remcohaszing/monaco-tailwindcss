@@ -1,6 +1,5 @@
 import { State } from 'tailwindcss-language-service';
 import { AtRule, Container, Node } from 'postcss'
-import dlv from 'dlv'
 
 function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule'
@@ -10,7 +9,7 @@ export default function getVariants(state: State): Record<string, string> {
   function escape(className: string): string {
     let node = state.modules.postcssSelectorParser.module.className()
     node.value = className
-    return dlv(node, 'raws.value', node.value)
+    return node.raws?.value ?? node.value
   }
 
   let result = {}
