@@ -10,7 +10,6 @@ import {
   getColor,
   getDocumentColors,
   resolveCompletionItem,
-  State,
 } from 'tailwindcss-language-service';
 import resolveConfig from 'tailwindcss/resolveConfig.js';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
@@ -28,6 +27,7 @@ import {
 } from 'vscode-languageserver-types';
 
 import getVariants from './getVariants.js';
+import {JitState} from "../index";
 
 function isObject(value: any): value is object {
   return Object.prototype.toString.call(value) === '[object Object]';
@@ -57,7 +57,7 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
 
   const jitContext = createContext(config);
 
-  const state: State = {
+  const state: JitState = {
     version: '3.0.0',
     config,
     enabled: true,

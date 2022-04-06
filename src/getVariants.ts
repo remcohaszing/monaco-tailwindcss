@@ -1,11 +1,11 @@
 import { AtRule, Container, Node } from 'postcss';
-import { State } from 'tailwindcss-language-service';
+import {JitState} from "../index";
 
 function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
 
-export default function getVariants(state: State): Record<string, string | null> {
+export default function getVariants(state: JitState): Record<string, string | null> {
   function escape(className: string): string {
     const node = state.modules.postcssSelectorParser.module.className();
     node.value = className;
