@@ -5,14 +5,14 @@ function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
 
-export default function getVariants(state: State): Record<string, string> {
+export default function getVariants(state: State): Record<string, string | null> {
   function escape(className: string): string {
     const node = state.modules.postcssSelectorParser.module.className();
     node.value = className;
     return node.raws?.value ?? node.value;
   }
 
-  const result = {};
+  const result: Record<string, string | null> = {};
   // [name, [sort, fn]]
   // [name, [[sort, fn]]]
   for (const [variantName, variantFnOrFns] of Array.from(
@@ -37,7 +37,7 @@ export default function getVariants(state: State): Record<string, string> {
       (selectors) => selectors.first.filter(({ type }) => type === 'class').pop().value,
     );
 
-    function getClassNameFromSelector(selector) {
+    function getClassNameFromSelector(selector: string) {
       return classNameParser.transformSync(selector);
     }
 
@@ -61,8 +61,8 @@ export default function getVariants(state: State): Record<string, string> {
 
     const definitions = [];
 
+    let definition: string | null = null;
     for (const fn of fns) {
-      let definition: string;
       const container = root.clone();
       const returnValue = fn({
         container,
