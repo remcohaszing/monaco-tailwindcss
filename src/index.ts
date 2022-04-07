@@ -1,4 +1,5 @@
-import { languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { registerMarkerDataProvider } from 'monaco-marker-data-provider';
 import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
 import { createWorkerManager } from 'monaco-worker-manager';
 
@@ -6,6 +7,7 @@ import {
   createColorProvider,
   createCompletionItemProvider,
   createHoverProvider,
+  createMarkerDataProvider,
 } from './languageFeatures';
 import { TailwindcssWorker } from './tailwindcss.worker';
 
@@ -33,7 +35,26 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
         languageSelector,
         createHoverProvider(workerManager.getWorker),
       ),
+      registerMarkerDataProvider(
+        { editor },
+        'html',
+        createMarkerDataProvider(workerManager.getWorker),
+      ),
     ];
+
+    // Monaco editor doesn’t provide a function to match language selectors, so let’s just support
+    // strings here.
+    for (const language of Array.isArray(languageSelector)
+      ? languageSelector
+      : [languageSelector]) {
+      if (typeof language === 'string') {
+        registerMarkerDataProvider(
+          { editor },
+          language,
+          createMarkerDataProvider(workerManager.getWorker),
+        );
+      }
+    }
 
     return {
       dispose() {

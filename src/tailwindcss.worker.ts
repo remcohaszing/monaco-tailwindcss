@@ -3,10 +3,11 @@ import { initialize } from 'monaco-worker-manager/worker';
 import postcss from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
 import {
+  AugmentedDiagnostic,
   // CompletionsFromClassList,
   doComplete,
   doHover,
-  // DoValidate,
+  doValidate,
   getColor,
   getDocumentColors,
   resolveCompletionItem,
@@ -38,6 +39,8 @@ export interface TailwindcssWorker {
   getDocumentColors: (uri: string, languageId: string) => ColorInformation[];
 
   doHover: (uri: string, languageId: string, position: Position) => Hover | undefined;
+
+  doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[];
 
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
@@ -131,6 +134,16 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       }
 
       return doHover(state, textDocument, position);
+    },
+
+    doValidate(uri, languageId) {
+      const textDocument = getTextDocument(uri, languageId);
+
+      if (!textDocument) {
+        return [];
+      }
+
+      return doValidate(state, textDocument);
     },
 
     getDocumentColors(uri, languageId) {
