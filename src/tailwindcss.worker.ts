@@ -3,14 +3,14 @@ import { initialize } from 'monaco-worker-manager/worker';
 import postcss from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
 import {
+  AugmentedDiagnostic,
   // CompletionsFromClassList,
   doComplete,
   doHover,
-  // DoValidate,
+  doValidate,
   getColor,
   getDocumentColors,
   resolveCompletionItem,
-  State,
 } from 'tailwindcss-language-service';
 import resolveConfig from 'tailwindcss/resolveConfig.js';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
@@ -27,6 +27,13 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
+import { JitState } from '..';
+import getVariants from './getVariants.js';
+
+function isObject(value: unknown): value is object {
+  return typeof value === 'object' && value != null;
+}
+
 export interface TailwindcssWorker {
   doComplete: (
     uri: string,
@@ -38,6 +45,8 @@ export interface TailwindcssWorker {
   getDocumentColors: (uri: string, languageId: string) => ColorInformation[];
 
   doHover: (uri: string, languageId: string, position: Position) => Hover | undefined;
+
+  doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[];
 
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
@@ -51,7 +60,7 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
 
   const jitContext = createContext(config);
 
-  const state: State = {
+  const state: JitState = {
     version: '3.0.0',
     config,
     enabled: true,
@@ -72,7 +81,8 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
 
     jit: true,
     jitContext,
-    variants: {},
+    separator: ':',
+    screens: isObject(config.theme.screens) ? Object.keys(config.theme.screens) : [],
     editor: {
       userLanguages: {},
       // @ts-expect-error this is poorly typed
@@ -97,6 +107,8 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       },
     },
   };
+
+  state.variants = getVariants(state);
 
   state.classList = jitContext
     .getClassList()
@@ -131,6 +143,16 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       }
 
       return doHover(state, textDocument, position);
+    },
+
+    doValidate(uri, languageId) {
+      const textDocument = getTextDocument(uri, languageId);
+
+      if (!textDocument) {
+        return [];
+      }
+
+      return doValidate(state, textDocument);
     },
 
     getDocumentColors(uri, languageId) {

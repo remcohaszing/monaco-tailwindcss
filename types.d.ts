@@ -11,10 +11,25 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
+  import { Container } from 'postcss';
   import { TailwindConfig } from 'tailwindcss/tailwind-config';
+
+  interface Api {
+    container: Container;
+    separator: string;
+    format: (def: string) => void;
+    wrap: (rule: Container) => void;
+  }
+
+  type VariantPreview = string;
+
+  type VariantFn = [number, (api: Api) => VariantPreview | undefined];
+
+  type VariantName = string;
 
   export interface JitContext {
     getClassList: () => string[];
+    variantMap: Map<VariantName, VariantFn[]>;
   }
 
   export function createContext(config: TailwindConfig): JitContext;

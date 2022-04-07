@@ -55,7 +55,7 @@ const cssModel = editor.createModel(
 
 @layer components {
   .btn-blue {
-    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold font-bold py-2 px-4 rounded;
   }
 }
 
@@ -71,12 +71,15 @@ const cssModel = editor.createModel(
 .select2-dropdown {
   @apply rounded-b-lg shadow-md;
 }
+
 .select2-search {
   @apply border border-gray-300 rounded;
 }
+
 .select2-results__group {
   @apply text-lg font-bold text-gray-900;
-}`,
+}
+`,
   'css',
 );
 const htmlModel = editor.createModel(
