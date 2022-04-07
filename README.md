@@ -14,8 +14,16 @@ npm install monaco-tailwindcss
 Import `monaco-tailwindcss` and configure it before an editor instance is created.
 
 ```typescript
-import { editor } from 'monaco-editor';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
+import { editor, languages } from 'monaco-editor';
+import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
+
+languages.css.cssDefaults.setOptions({
+  data: {
+    dataProviders: {
+      tailwind: tailwindcssData,
+    },
+  },
+});
 
 configureMonacoTailwindcss();
 

@@ -11,6 +11,8 @@ import { TailwindcssWorker } from './tailwindcss.worker';
 
 export const defaultLanguageSelector = ['javascript', 'html', 'mdx', 'typescript'] as const;
 
+export { tailwindcssData } from './cssData';
+
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
   ({ config, languageSelector = defaultLanguageSelector } = {}) => {
     const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>({

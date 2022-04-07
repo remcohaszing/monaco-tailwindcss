@@ -1,6 +1,6 @@
 import './index.css';
 import { editor, Environment, languages } from 'monaco-editor';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
+import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
 
 declare global {
   interface Window {
@@ -31,9 +31,51 @@ window.MonacoEnvironment = {
   },
 };
 
+languages.css.cssDefaults.setOptions({
+  data: {
+    dataProviders: {
+      tailwind: tailwindcssData,
+    },
+  },
+});
+
 const cssModel = editor.createModel(
-  `body {
-  color: red;
+  `@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+}
+
+@layer components {
+  .btn-blue {
+    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+  }
+}
+
+@layer utilities {
+  .filter-none {
+    filter: none;
+  }
+  .filter-grayscale {
+    filter: grayscale(100%);
+  }
+}
+
+.select2-dropdown {
+  @apply rounded-b-lg shadow-md;
+}
+.select2-search {
+  @apply border border-gray-300 rounded;
+}
+.select2-results__group {
+  @apply text-lg font-bold text-gray-900;
 }`,
   'css',
 );
