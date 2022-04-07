@@ -30,7 +30,7 @@ import { JitState } from '..';
 import getVariants from './getVariants.js';
 
 function isObject(value: unknown): value is object {
-  return typeof value === 'object' && value !== null;
+  return typeof value === 'object' && value != null;
 }
 
 export interface TailwindcssWorker {

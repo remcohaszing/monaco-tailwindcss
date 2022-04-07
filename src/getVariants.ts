@@ -1,4 +1,5 @@
-import { AtRule, Container, Node } from 'postcss';
+import { AtRule, Node } from 'postcss';
+import { Container } from 'postcss-selector-parser';
 
 import { JitState } from '..';
 
@@ -28,51 +29,45 @@ export default function getVariants(state: JitState): Record<string, string | nu
     });
 
     const classNameParser = state.modules.postcssSelectorParser.module(
-      (selectors) => selectors.first.filter(({ type }) => type === 'class').pop().value,
+      (selectors) =>
+        (selectors.first as Container).filter(({ type }) => type === 'class').pop()!.value,
     );
-
-    function getClassNameFromSelector(selector: string) {
-      return classNameParser.transformSync(selector);
-    }
-
-    function modifySelectors(modifierFunction) {
-      root.each((rule) => {
-        if (rule.type !== 'rule') {
-          return;
-        }
-
-        rule.selectors = rule.selectors.map((selector) =>
-          modifierFunction({
-            get className() {
-              return getClassNameFromSelector(selector);
-            },
-            selector,
-          }),
-        );
-      });
-      return root;
-    }
 
     const definitions: string[] = [];
 
-    let definition: string | null = null;
     for (const fn of fns) {
+      let definition: string | null | undefined;
       const container = root.clone();
       const returnValue = fn({
         container,
         separator: state.separator,
-        modifySelectors,
-        format(def: string) {
+        modifySelectors(modifierFunction) {
+          root.each((rule) => {
+            if (rule.type !== 'rule') {
+              return;
+            }
+
+            // eslint-disable-next-line no-param-reassign
+            rule.selectors = rule.selectors.map((selector) =>
+              modifierFunction({
+                get className() {
+                  return classNameParser.transformSync(selector);
+                },
+                selector,
+              }),
+            );
+          });
+          return root;
+        },
+        format(def) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');
         },
-        wrap(rule: Container) {
+        wrap(rule) {
           if (isAtRule(rule)) {
             definition = `@${rule.name} ${rule.params}`;
           }
         },
       });
-
-      console.log(returnValue, !definition);
 
       if (!definition) {
         definition = returnValue;
@@ -87,8 +82,7 @@ export default function getVariants(state: JitState): Record<string, string | nu
         decl.remove();
       });
 
-      definition = container
-        .toString()
+      definition = String(container)
         .replace(`.${escape(`${variantName}:${placeholder}`)}`, '&')
         .replace(/(?<!\\)[{}]/g, '')
         .replace(/\s*\n\s*/g, ' ')
