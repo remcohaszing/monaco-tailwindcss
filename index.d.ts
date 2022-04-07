@@ -24,7 +24,6 @@ export interface JitState extends State {
   jit: true;
   jitContext: JitContext;
   modules: {
-    tailwindcss: undefined;
     postcss: {
       version: string;
       module: Postcss;

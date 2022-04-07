@@ -13,12 +13,8 @@ export default function getVariants(state: JitState): Record<string, string | nu
   }
 
   const result: Record<string, string | null> = {};
-  // [name, [sort, fn]]
-  // [name, [[sort, fn]]]
-  for (const [variantName, variantFnOrFns] of state.jitContext.variantMap) {
-    const fns = (Array.isArray(variantFnOrFns[0]) ? variantFnOrFns : [variantFnOrFns]).map(
-      ([_sort, fn]) => fn,
-    );
+  for (const [variantName, variantIdsAndFns] of state.jitContext.variantMap) {
+    const fns = variantIdsAndFns.map(([, fn]) => fn);
 
     const placeholder = '__variant_placeholder__';
 
@@ -57,7 +53,7 @@ export default function getVariants(state: JitState): Record<string, string | nu
       return root;
     }
 
-    const definitions = [];
+    const definitions: string[] = [];
 
     let definition: string | null = null;
     for (const fn of fns) {
@@ -75,6 +71,8 @@ export default function getVariants(state: JitState): Record<string, string | nu
           }
         },
       });
+
+      console.log(returnValue, !definition);
 
       if (!definition) {
         definition = returnValue;
