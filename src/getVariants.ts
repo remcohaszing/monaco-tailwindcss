@@ -1,4 +1,4 @@
-import { AtRule, Container, Node, Root } from 'postcss';
+import { AtRule, Container, Node } from 'postcss';
 import { ClassName } from 'postcss-selector-parser';
 
 import { JitState } from '..';
@@ -37,26 +37,6 @@ export default function getVariants(state: JitState): Record<string, string | nu
       return classNameParser.transformSync(selector);
     }
 
-    // eslint-disable-next-line no-inner-declarations, unicorn/consistent-function-scoping
-    function modifySelectors(modifierFunction: (...any: any[]) => any): Root {
-      root.each((rule) => {
-        if (rule.type !== 'rule') {
-          return;
-        }
-
-        // eslint-disable-next-line no-param-reassign
-        rule.selectors = rule.selectors.map((selector) =>
-          modifierFunction({
-            get className() {
-              return getClassNameFromSelector(selector);
-            },
-            selector,
-          }),
-        );
-      });
-      return root;
-    }
-
     const definitions: string[] = [];
 
     let definition: string | undefined;
@@ -65,7 +45,6 @@ export default function getVariants(state: JitState): Record<string, string | nu
       const returnValue = fn({
         container,
         separator: state.separator,
-        modifySelectors,
         // eslint-disable-next-line @typescript-eslint/no-loop-func
         format(def: string) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');

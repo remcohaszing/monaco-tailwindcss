@@ -11,13 +11,12 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
-  import { Container, Root } from 'postcss';
+  import { Container } from 'postcss';
   import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
   interface Api {
     container: Container;
     separator: string;
-    modifySelectors: (modifierFunction: any) => Root;
     format: (def: string) => void;
     wrap: (rule: Container) => void;
   }
