@@ -1,6 +1,15 @@
 import { fromRatio, names as namedColors } from '@ctrl/tinycolor';
-import { editor, IPosition, IRange, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import {
+  editor,
+  IPosition,
+  IRange,
+  languages,
+  MarkerSeverity,
+  Uri,
+} from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { MarkerDataProvider } from 'monaco-marker-data-provider';
 import { WorkerGetter } from 'monaco-worker-manager';
+import { AugmentedDiagnostic } from 'tailwindcss-language-service';
 import { CompletionContext, CompletionTriggerKind } from 'vscode-languageserver-protocol';
 import * as ls from 'vscode-languageserver-types';
 
@@ -307,6 +316,49 @@ function lsCompletionListToMonacoCompletionList(
   };
 }
 
+function lsDiagnosticSeverityToMonacoModelMarkerSeverity(
+  severity: ls.DiagnosticSeverity | undefined,
+): MarkerSeverity {
+  switch (severity) {
+    // Warning
+    case 2:
+      return 4;
+    // Information
+    case 3:
+      return 2;
+    // Hint
+    case 4:
+      return 1;
+    // Error
+    default:
+      return 8;
+  }
+}
+
+function lsDiagnosticRelatedInformationToMonacoRelatedInformation(
+  relatedInformation: ls.DiagnosticRelatedInformation,
+): editor.IRelatedInformation {
+  return {
+    ...lsRangeToMonacoRange(relatedInformation.location.range),
+    resource: Uri.parse(relatedInformation.location.uri),
+    message: relatedInformation.message,
+  };
+}
+
+function augmentedDiagnosticToMonacoModelMarker(
+  diagnostic: AugmentedDiagnostic,
+): editor.IMarkerData {
+  return {
+    ...lsRangeToMonacoRange(diagnostic.range),
+    message: diagnostic.message,
+    severity: lsDiagnosticSeverityToMonacoModelMarkerSeverity(diagnostic.severity),
+    code: diagnostic.code,
+    relatedInformation: diagnostic.relatedInformation?.map(
+      lsDiagnosticRelatedInformationToMonacoRelatedInformation,
+    ),
+  };
+}
+
 const colorNames = Object.values(namedColors);
 const editableColorRegex = new RegExp(
   `-\\[(${colorNames.join('|')}|((?:#|rgba?\\(|hsla?\\())[^\\]]+)\\]$`,
@@ -459,6 +511,19 @@ export function createCompletionItemProvider(
       );
 
       return lsCompletionItemToMonacoCompletionItem(result);
+    },
+  };
+}
+
+export function createMarkerDataProvider(getWorker: WorkerAccessor): MarkerDataProvider {
+  return {
+    owner: 'tailwindcss',
+    async provideMarkerData(model) {
+      const worker = await getWorker(model.uri);
+
+      const diagnostics = await worker.doValidate(String(model.uri), model.getLanguageId());
+
+      return diagnostics.map(augmentedDiagnosticToMonacoModelMarker);
     },
   };
 }
