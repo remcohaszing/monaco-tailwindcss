@@ -1,4 +1,5 @@
-import { AtRule, Container, Node } from 'postcss';
+import { AtRule, Container, Node, Root } from 'postcss';
+import { ClassName } from 'postcss-selector-parser';
 
 import { JitState } from '..';
 
@@ -31,16 +32,19 @@ export default function getVariants(state: JitState): Record<string, string | nu
       (selectors) => selectors.first.filter(({ type }) => type === 'class').pop().value,
     );
 
-    function getClassNameFromSelector(selector: string) {
+    // eslint-disable-next-line no-inner-declarations, unicorn/consistent-function-scoping
+    function getClassNameFromSelector(selector: string): ClassName {
       return classNameParser.transformSync(selector);
     }
 
-    function modifySelectors(modifierFunction) {
+    // eslint-disable-next-line no-inner-declarations, unicorn/consistent-function-scoping
+    function modifySelectors(modifierFunction: (...any: any[]) => any): Root {
       root.each((rule) => {
         if (rule.type !== 'rule') {
           return;
         }
 
+        // eslint-disable-next-line no-param-reassign
         rule.selectors = rule.selectors.map((selector) =>
           modifierFunction({
             get className() {
@@ -55,24 +59,24 @@ export default function getVariants(state: JitState): Record<string, string | nu
 
     const definitions: string[] = [];
 
-    let definition: string | null = null;
+    let definition: string | undefined;
     for (const fn of fns) {
       const container = root.clone();
       const returnValue = fn({
         container,
         separator: state.separator,
         modifySelectors,
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         format(def: string) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');
         },
+        // eslint-disable-next-line @typescript-eslint/no-loop-func
         wrap(rule: Container) {
           if (isAtRule(rule)) {
             definition = `@${rule.name} ${rule.params}`;
           }
         },
       });
-
-      console.log(returnValue, !definition);
 
       if (!definition) {
         definition = returnValue;
@@ -87,8 +91,7 @@ export default function getVariants(state: JitState): Record<string, string | nu
         decl.remove();
       });
 
-      definition = container
-        .toString()
+      definition = String(container)
         .replace(`.${escape(`${variantName}:${placeholder}`)}`, '&')
         .replace(/(?<!\\)[{}]/g, '')
         .replace(/\s*\n\s*/g, ' ')

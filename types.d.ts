@@ -11,20 +11,20 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
-  import { TailwindConfig } from 'tailwindcss/tailwind-config';
   import { Container, Root } from 'postcss';
+  import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
   interface Api {
-    container: Container,
-    separator: string,
-    modifySelectors: (modifierFunction: any) => Root,
-    format: (def: string) => void,
-    wrap: (rule: Container) => void,
+    container: Container;
+    separator: string;
+    modifySelectors: (modifierFunction: any) => Root;
+    format: (def: string) => void;
+    wrap: (rule: Container) => void;
   }
 
   type VariantPreview = string;
 
-  type VariantFn = [number, (api: Api) => VariantPreview | null];
+  type VariantFn = [number, (api: Api) => VariantPreview | undefined];
 
   type VariantName = string;
 
