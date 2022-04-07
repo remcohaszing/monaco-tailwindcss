@@ -1,5 +1,4 @@
 import { AtRule, Container, Node } from 'postcss';
-import { ClassName } from 'postcss-selector-parser';
 
 import { JitState } from '..';
 
@@ -27,15 +26,6 @@ export default function getVariants(state: JitState): Record<string, string | nu
         }),
       ],
     });
-
-    const classNameParser = state.modules.postcssSelectorParser.module(
-      (selectors) => selectors.first.filter(({ type }) => type === 'class').pop().value,
-    );
-
-    // eslint-disable-next-line no-inner-declarations, unicorn/consistent-function-scoping
-    function getClassNameFromSelector(selector: string): ClassName {
-      return classNameParser.transformSync(selector);
-    }
 
     const definitions: string[] = [];
 
