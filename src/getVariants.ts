@@ -29,17 +29,15 @@ export default function getVariants(state: JitState): Record<string, string | nu
 
     const definitions: string[] = [];
 
-    let definition: string | undefined;
     for (const fn of fns) {
+      let definition: string | undefined;
       const container = root.clone();
       const returnValue = fn({
         container,
         separator: state.separator,
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
         format(def: string) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');
         },
-        // eslint-disable-next-line @typescript-eslint/no-loop-func
         wrap(rule: Container) {
           if (isAtRule(rule)) {
             definition = `@${rule.name} ${rule.params}`;
