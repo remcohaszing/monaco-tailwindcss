@@ -17,7 +17,6 @@ await build({
   define: {
     'process.env.DEBUG': 'undefined',
     'process.env.NODE_DEBUG': 'undefined',
-    'process.env.JEST_WORKER_ID': '123',
     'process.env.TAILWIND_MODE': JSON.stringify('build'),
     'process.env.TAILWIND_DISABLE_TOUCH': 'true',
     __dirname: '"/"',
@@ -31,6 +30,17 @@ await build({
           path: fileURLToPath(new URL('src/stubs/fs.cjs', import.meta.url)),
           sideEffects: false,
         }));
+        onResolve({ filter: /^\.\/(util\/)?log$/ }, ({ resolveDir }) => {
+          if (resolveDir.includes('tailwindcss') === false) {
+            throw new Error(
+              'Build script needs to be adjusted as it doenst only affect the tailwind "log" script.',
+            );
+          }
+          return {
+            path: fileURLToPath(new URL('src/stubs/tailwindcss.utils.log.ts', import.meta.url)),
+            sideEffects: false,
+          };
+        });
         onResolve({ filter: /^util$/ }, () => ({
           path: fileURLToPath(new URL('src/stubs/util.cjs', import.meta.url)),
           sideEffects: false,
