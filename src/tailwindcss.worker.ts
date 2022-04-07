@@ -26,11 +26,11 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
+import { JitState } from '..';
 import getVariants from './getVariants.js';
-import {JitState} from "../index";
 
-function isObject(value: any): value is object {
-  return Object.prototype.toString.call(value) === '[object Object]';
+function isObject(value: unknown): value is object {
+  return typeof value === 'object' && value !== null;
 }
 
 export interface TailwindcssWorker {

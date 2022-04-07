@@ -1,5 +1,6 @@
 import { AtRule, Container, Node } from 'postcss';
-import {JitState} from "../index";
+
+import { JitState } from '..';
 
 function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule';
@@ -7,16 +8,14 @@ function isAtRule(node: Node): node is AtRule {
 
 export default function getVariants(state: JitState): Record<string, string | null> {
   function escape(className: string): string {
-    const node = state.modules.postcssSelectorParser.module.className({value: className});
+    const node = state.modules.postcssSelectorParser.module.className({ value: className });
     return node.value;
   }
 
   const result: Record<string, string | null> = {};
   // [name, [sort, fn]]
   // [name, [[sort, fn]]]
-  for (const [variantName, variantFnOrFns] of Array.from(
-    state.jitContext.variantMap as Map<string, [any, any]>,
-  )) {
+  for (const [variantName, variantFnOrFns] of state.jitContext.variantMap) {
     const fns = (Array.isArray(variantFnOrFns[0]) ? variantFnOrFns : [variantFnOrFns]).map(
       ([_sort, fn]) => fn,
     );

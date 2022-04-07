@@ -13,8 +13,13 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
   import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
+  type Variant = [sort: string, fn: (any: any) => any];
+
+  type VariantFnOrFns = Variant | [Variant];
+
   export interface JitContext {
     getClassList: () => string[];
+    variantMap: Map<string, VariantFnOrFns>;
   }
 
   export function createContext(config: TailwindConfig): JitContext;

@@ -1,8 +1,11 @@
 import { IDisposable, languages } from 'monaco-editor';
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
-import { State } from 'tailwindcss-language-service';
-import type { Postcss } from 'postcss';
+import { Postcss } from 'postcss';
 import parse from 'postcss-selector-parser';
+import { State } from 'tailwindcss-language-service';
+import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
+import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
+import { createContext, JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
 export interface MonacoTailwindcssOptions {
   /**
@@ -19,12 +22,9 @@ export interface JitState extends State {
   screens: string[];
   variants: Record<string, string | null>;
   jit: true;
-  jitContext: any;
+  jitContext: JitContext;
   modules: {
-    tailwindcss?: {
-      version: string;
-      module: any;
-    };
+    tailwindcss: undefined;
     postcss: {
       version: string;
       module: Postcss;
@@ -34,13 +34,13 @@ export interface JitState extends State {
     };
     jit: {
       generateRules: {
-        module: any;
+        module: typeof generateRules;
       };
       createContext: {
-        module: any;
+        module: typeof createContext;
       };
       expandApplyAtRules: {
-        module: any;
+        module: typeof expandApplyAtRules;
       };
     };
   };
