@@ -46,3 +46,10 @@ export interface JitState extends State {
 }
 
 export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): IDisposable;
+
+/**
+ * This data can be used with the default Monaco CSS support to support tailwind directives.
+ *
+ * It will provider hover information from the Tailwindcss documentation, including a link.
+ */
+export const tailwindcssData: languages.css.CSSDataV1;

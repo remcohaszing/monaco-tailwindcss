@@ -1,6 +1,6 @@
 import './index.css';
 import { editor, Environment, languages } from 'monaco-editor';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
+import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
 
 declare global {
   interface Window {
@@ -30,6 +30,14 @@ window.MonacoEnvironment = {
     }
   },
 };
+
+languages.css.cssDefaults.setOptions({
+  data: {
+    dataProviders: {
+      tailwind: tailwindcssData,
+    },
+  },
+});
 
 const cssModel = editor.createModel(
   `@tailwind base;
