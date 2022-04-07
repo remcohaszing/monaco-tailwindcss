@@ -11,7 +11,6 @@ import {
   getColor,
   getDocumentColors,
   resolveCompletionItem,
-  State,
 } from 'tailwindcss-language-service';
 import resolveConfig from 'tailwindcss/resolveConfig.js';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
@@ -27,6 +26,13 @@ import {
   Hover,
   Position,
 } from 'vscode-languageserver-types';
+
+import { JitState } from '..';
+import getVariants from './getVariants.js';
+
+function isObject(value: unknown): value is object {
+  return typeof value === 'object' && value != null;
+}
 
 export interface TailwindcssWorker {
   doComplete: (
@@ -54,7 +60,7 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
 
   const jitContext = createContext(config);
 
-  const state: State = {
+  const state: JitState = {
     version: '3.0.0',
     config,
     enabled: true,
@@ -75,7 +81,8 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
 
     jit: true,
     jitContext,
-    variants: {},
+    separator: ':',
+    screens: isObject(config.theme.screens) ? Object.keys(config.theme.screens) : [],
     editor: {
       userLanguages: {},
       // @ts-expect-error this is poorly typed
@@ -100,6 +107,8 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       },
     },
   };
+
+  state.variants = getVariants(state);
 
   state.classList = jitContext
     .getClassList()
