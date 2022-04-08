@@ -13,6 +13,12 @@ declare global {
 const initialConfig: TailwindConfig = {
   theme: {
     extend: {
+        "screens": {
+            "television": "90000px",
+        },
+        "spacing": {
+            "128": "32rem"
+        },
       colors: {
         // https://icolorpalette.com/color/molten-lava
         lava: '#b5332e',
