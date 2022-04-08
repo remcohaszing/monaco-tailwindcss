@@ -64,5 +64,9 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
           disposables.pop()?.dispose();
         }
       },
+
+      setConfig(tailwindConfig) {
+        workerManager.updateCreateData({ config: tailwindConfig });
+      },
     };
   };
