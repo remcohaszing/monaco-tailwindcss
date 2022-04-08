@@ -16,11 +16,11 @@ export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typ
 export { tailwindcssData } from './cssData';
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
-  ({ config, languageSelector = defaultLanguageSelector } = {}) => {
+  ({ tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {
     const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>({
       label: 'tailwindcss',
       moduleId: 'monaco-tailwindcss/tailwindcss.worker',
-      createData: { config },
+      createData: { tailwindConfig },
     });
 
     const disposables = [
@@ -65,8 +65,8 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
         }
       },
 
-      setConfig(tailwindConfig) {
-        workerManager.updateCreateData({ config: tailwindConfig });
+      setTailwindConfig(newTailwindConfig) {
+        workerManager.updateCreateData({ tailwindConfig: newTailwindConfig });
       },
     };
   };

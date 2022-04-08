@@ -10,7 +10,7 @@ declare global {
   }
 }
 
-const initialConfig: TailwindConfig = {
+const tailwindConfig: TailwindConfig = {
   theme: {
     extend: {
       screens: {
@@ -40,7 +40,7 @@ const initialConfig: TailwindConfig = {
   },
 };
 
-const monacoTailwindcss = configureMonacoTailwindcss({ config: initialConfig });
+const monacoTailwindcss = configureMonacoTailwindcss({ tailwindConfig });
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
@@ -81,7 +81,7 @@ languages.json.jsonDefaults.setDiagnosticsOptions({
 });
 
 const tailwindrcModel = editor.createModel(
-  `${JSON.stringify(initialConfig, undefined, 2)}\n`,
+  `${JSON.stringify(tailwindConfig, undefined, 2)}\n`,
   'json',
   Uri.parse('file:///.tailwindrc.json'),
 );
@@ -191,17 +191,17 @@ window.addEventListener('hashchange', () => {
 });
 
 tailwindrcModel.onDidChangeContent(() => {
-  let tailwindConfig: unknown;
+  let newConfig: unknown;
   try {
-    tailwindConfig = parse(tailwindrcModel.getValue());
+    newConfig = parse(tailwindrcModel.getValue());
   } catch {
     return;
   }
-  if (typeof tailwindConfig !== 'object') {
+  if (typeof newConfig !== 'object') {
     return;
   }
-  if (tailwindConfig == null) {
+  if (newConfig == null) {
     return;
   }
-  monacoTailwindcss.setConfig(tailwindConfig as TailwindConfig);
+  monacoTailwindcss.setTailwindConfig(newConfig as TailwindConfig);
 });

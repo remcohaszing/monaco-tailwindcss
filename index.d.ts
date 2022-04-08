@@ -13,7 +13,7 @@ export interface MonacoTailwindcssOptions {
    */
   languageSelector?: languages.LanguageSelector;
 
-  config?: TailwindConfig;
+  tailwindConfig?: TailwindConfig;
 }
 
 export interface JitState extends State {
@@ -46,7 +46,7 @@ export interface JitState extends State {
 }
 
 export interface MonacoTailwindcss extends IDisposable {
-  setConfig: (config: TailwindConfig) => void;
+  setTailwindConfig: (tailwindConfig: TailwindConfig) => void;
 }
 
 export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): MonacoTailwindcss;
