@@ -24,7 +24,9 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
 
     return {
       dispose() {
-        disposables.forEach((disposable) => disposable.dispose());
+        for (const disposable of disposables) {
+          disposable.dispose();
+        }
       },
     };
   };
