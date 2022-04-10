@@ -1,6 +1,6 @@
 import { AtRule, Container, Node } from 'postcss';
 
-import { JitState } from '..';
+import { JitState } from './types';
 
 function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule';
