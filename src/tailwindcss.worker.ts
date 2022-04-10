@@ -12,10 +12,10 @@ import {
   getDocumentColors,
   resolveCompletionItem,
 } from 'tailwindcss-language-service';
-import resolveConfig from 'tailwindcss/resolveConfig.js';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
 import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
 import { createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { CompletionContext } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';

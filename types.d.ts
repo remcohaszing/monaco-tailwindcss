@@ -34,3 +34,7 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
 
   export function createContext(config: TailwindConfig): JitContext;
 }
+
+declare module 'tailwindcss/src/public/resolve-config.js' {
+  export { default } from 'tailwindcss/resolveConfig';
+}
