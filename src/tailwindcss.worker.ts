@@ -52,7 +52,9 @@ export interface TailwindcssWorker {
 }
 
 initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
-  const config = resolveConfig(options.config ?? ({} as Partial<TailwindConfig> as TailwindConfig));
+  const config = resolveConfig(
+    options.tailwindConfig ?? ({} as Partial<TailwindConfig> as TailwindConfig),
+  );
 
   // Const lspRoot = await postcss([
   //   tailwindcss({ ...config, mode: 'aot', purge: false, variants: [] }),

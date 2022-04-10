@@ -7,10 +7,14 @@ export interface MonacoTailwindcssOptions {
    */
   languageSelector?: languages.LanguageSelector;
 
-  config?: TailwindConfig;
+  tailwindConfig?: TailwindConfig;
 }
 
-export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): IDisposable;
+export interface MonacoTailwindcss extends IDisposable {
+  setTailwindConfig: (tailwindConfig: TailwindConfig) => void;
+}
+
+export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): MonacoTailwindcss;
 
 /**
  * This data can be used with the default Monaco CSS support to support tailwind directives.
