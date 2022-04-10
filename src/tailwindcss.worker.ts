@@ -27,8 +27,8 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import { JitState } from '..';
 import getVariants from './getVariants.js';
+import { JitState } from './types';
 
 function isObject(value: unknown): value is object {
   return typeof value === 'object' && value != null;
