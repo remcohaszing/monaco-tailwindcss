@@ -1,4 +1,5 @@
 import { readFile } from 'fs/promises';
+import { sep } from 'path';
 import { fileURLToPath } from 'url';
 
 import { build } from 'esbuild';
@@ -16,35 +17,64 @@ await build({
   target: ['es2020'],
   define: {
     'process.env.DEBUG': 'undefined',
-    'process.env.NODE_DEBUG': 'undefined',
-    'process.env.JEST_WORKER_ID': '123',
-    'process.env.TAILWIND_MODE': JSON.stringify('build'),
-    'process.env.TAILWIND_DISABLE_TOUCH': 'true',
     __dirname: '"/"',
-    __filename: '"/index.js"',
   },
   plugins: [
     {
       name: 'alias',
       setup({ onResolve, resolve }) {
-        onResolve({ filter: /^fs$/ }, () => ({
-          path: fileURLToPath(new URL('src/stubs/fs.cjs', import.meta.url)),
-          sideEffects: false,
-        }));
-        onResolve({ filter: /^util$/ }, () => ({
-          path: fileURLToPath(new URL('src/stubs/util.cjs', import.meta.url)),
-          sideEffects: false,
-        }));
-        onResolve({ filter: /^vscode-emmet-helper-bundled$/ }, () => ({
-          path: fileURLToPath(new URL('src/stubs/noop.cjs', import.meta.url)),
-          sideEffects: false,
-        }));
-
-        // Will be external depending on `external` above
-        onResolve({ filter: /^path$/ }, ({ path, ...options }) =>
-          resolve('path-browserify', options),
+        // These packages are imported, but can be stubbed.
+        onResolve(
+          {
+            filter:
+              /^(detect-indent|chalk|fs|path|url|util|util-deprecate|vscode-emmet-helper-bundled)$/,
+          },
+          ({ path }) => ({
+            path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
+            sideEffects: false,
+          }),
         );
-        onResolve({ filter: /^url$/ }, ({ path, ...options }) => resolve('url/', options));
+
+        // The tailwindcss main export exports CJS, but we can get better tree shaking if we import
+        // from the ESM src directoy instead.
+        onResolve({ filter: /^tailwindcss$/ }, ({ path, ...options }) =>
+          resolve('tailwindcss/src', options),
+        );
+        onResolve({ filter: /^tailwindcss\/lib/ }, ({ path, ...options }) =>
+          resolve(path.replace('lib', 'src'), options),
+        );
+
+        // The tailwindcss-language-service main export exports CJS by default, but we get better
+        // tree shaking if we import the ESM variant.
+        onResolve({ filter: /^tailwindcss-language-service$/ }, ({ path, ...options }) =>
+          resolve('tailwindcss-language-service/dist/tailwindcss-language-service.esm.js', options),
+        );
+
+        // This file pulls in a number of dependencies, but we don’t really need it anyway.
+        onResolve({ filter: /^\.+\/(util\/)?log$/ }, ({ importer, path }) => {
+          if (importer.includes(`${sep}tailwindcss${sep}`)) {
+            return {
+              path: fileURLToPath(new URL('src/stubs/tailwindcss/utils/log.ts', import.meta.url)),
+              sideEffects: false,
+            };
+          }
+          throw new Error(
+            `Failed to resolve ${path} from ${importer} because of custom resolve logic.`,
+          );
+        });
+
+        // The culori main export exports CJS by default, but we get better tree shaking if we
+        // import the ESM variant.
+        onResolve({ filter: /^culori$/ }, ({ path, ...options }) =>
+          resolve('culori/build/culori.js', options),
+        );
+
+        onResolve({ filter: /^postcss-selector-parser\/.*\/\w+$/ }, ({ path, ...options }) =>
+          resolve(`${path}.js`, options),
+        );
+
+        // None of our dependencies use side effects, but many packages don’t explicitly define
+        // this.
         onResolve({ filter: /.*/ }, () => ({ sideEffects: false }));
       },
     },
