@@ -27,7 +27,7 @@ await build({
         onResolve(
           {
             filter:
-              /^(detect-indent|chalk|fs|path|util|util-deprecate|vscode-emmet-helper-bundled)$/,
+              /^(detect-indent|chalk|fs|path|url|util|util-deprecate|vscode-emmet-helper-bundled)$/,
           },
           ({ path }) => ({
             path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
@@ -67,6 +67,10 @@ await build({
         // import the ESM variant.
         onResolve({ filter: /^culori$/ }, ({ path, ...options }) =>
           resolve('culori/build/culori.js', options),
+        );
+
+        onResolve({ filter: /^postcss-selector-parser\/.*\/\w+$/ }, ({ path, ...options }) =>
+          resolve(`${path}.js`, options),
         );
 
         // None of our dependencies use side effects, but many packages don’t explicitly define

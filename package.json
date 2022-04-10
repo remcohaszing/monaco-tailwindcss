@@ -43,15 +43,12 @@
     "multi-regexp2": "^1.0.0",
     "postcss": "^8.0.0",
     "postcss-js": "^4.0.0",
+    "postcss-nested": "^5.0.0",
+    "postcss-selector-parser": "^6.0.0",
     "semver": "^7.0.0",
     "sift-string": "^0.0.2",
     "stringify-object": "^4.0.0",
-    "tmp-cache": "^1.0.0",
-    "type-fest": "^2.0.0",
-    "url": "^0.11.0",
-    "vscode-languageserver-protocol": "^3.0.0",
-    "vscode-languageserver-textdocument": "^1.0.0",
-    "vscode-languageserver-types": "^3.0.0"
+    "vscode-languageserver-textdocument": "^1.0.0"
   },
   "peerDependencies": {
     "monaco-editor": ">=0.30"
@@ -63,7 +60,9 @@
     "eslint-config-remcohaszing": "^3.0.0",
     "prettier": "^2.0.0",
     "tailwindcss": "^3.0.0",
-    "tailwindcss-language-service": "0.0.23"
+    "tailwindcss-language-service": "0.0.23",
+    "vscode-languageserver-protocol": "^3.0.0",
+    "vscode-languageserver-types": "^3.0.0"
   },
   "overrides": {
     "tailwindcss-language-service": {
