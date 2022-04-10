@@ -1,11 +1,9 @@
 import { readFile } from 'fs/promises';
-import { createRequire } from 'module';
 import { sep } from 'path';
 import { fileURLToPath } from 'url';
 
 import { build } from 'esbuild';
 
-const require = createRequire(import.meta.url);
 const pkg = JSON.parse(await readFile(new URL('package.json', import.meta.url)));
 
 await build({
@@ -47,7 +45,7 @@ await build({
         onResolve({ filter: /^tailwindcss$/ }, ({ path, ...options }) =>
           resolve('tailwindcss/src', options),
         );
-        onResolve({ filter: /^tailwindcss($|\/lib)/ }, ({ path, ...options }) =>
+        onResolve({ filter: /^tailwindcss\/lib/ }, ({ path, ...options }) =>
           resolve(path.replace('lib', 'src'), options),
         );
 
@@ -58,28 +56,23 @@ await build({
         );
 
         // This file pulls in a number of dependencies, but we don’t really need it anyway.
-        onResolve({ filter: /^\.+\/(util\/)?log$/ }, ({ path, ...options }) =>
-          options.importer.includes(`${sep}tailwindcss${sep}`)
-            ? {
-                path: fileURLToPath(new URL('src/stubs/tailwindcss/utils/log.ts', import.meta.url)),
-                sideEffects: false,
-              }
-            : resolve(path, options),
-        );
+        onResolve({ filter: /^\.+\/(util\/)?log$/ }, ({ importer, path }) => {
+          if (importer.includes(`${sep}tailwindcss${sep}`)) {
+            return {
+              path: fileURLToPath(new URL('src/stubs/tailwindcss/utils/log.ts', import.meta.url)),
+              sideEffects: false,
+            };
+          }
+          throw new Error(
+            `Failed to resolve ${path} from ${importer} because of custom resolve logic.`,
+          );
+        });
 
         // The culori main export exports CJS by default, but we get better tree shaking if we
         // import the ESM variant.
         onResolve({ filter: /^culori$/ }, ({ path, ...options }) =>
           resolve('culori/build/culori.js', options),
         );
-
-        // Some dependencies depend on very specific versions of postcss-selector-parser, but they
-        // don’t need this specific version. As a result this package would be included twice. This
-        // matters, because it’s a big dependency.
-        onResolve({ filter: /^postcss-selector-parser/ }, ({ path }) => ({
-          path: require.resolve(path),
-          sideEffects: false,
-        }));
 
         // None of our dependencies use side effects, but many packages don’t explicitly define
         // this.
