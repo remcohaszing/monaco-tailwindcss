@@ -17,12 +17,7 @@ await build({
   target: ['es2020'],
   define: {
     'process.env.DEBUG': 'undefined',
-    'process.env.NODE_DEBUG': 'undefined',
-    'process.env.JEST_WORKER_ID': '123',
-    'process.env.TAILWIND_MODE': JSON.stringify('build'),
-    'process.env.TAILWIND_DISABLE_TOUCH': 'true',
     __dirname: '"/"',
-    __filename: '"/index.js"',
   },
   plugins: [
     {
