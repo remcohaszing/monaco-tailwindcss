@@ -51,16 +51,18 @@ await build({
         );
 
         // This file pulls in a number of dependencies, but we don’t really need it anyway.
-        onResolve({ filter: /^\.+\/(util\/)?log$/ }, ({ importer, path }) => {
-          if (importer.includes(`${sep}tailwindcss${sep}`)) {
+        onResolve({ filter: /^\.+\/(util\/)?log$/, namespace: 'file' }, ({ path, ...options }) => {
+          if (options.importer.includes(`${sep}tailwindcss${sep}`)) {
             return {
               path: fileURLToPath(new URL('src/stubs/tailwindcss/utils/log.ts', import.meta.url)),
               sideEffects: false,
             };
           }
-          throw new Error(
-            `Failed to resolve ${path} from ${importer} because of custom resolve logic.`,
-          );
+          return resolve(path, {
+            ...options,
+            sideEffects: false,
+            namespace: 'noRecurse',
+          });
         });
 
         // The culori main export exports CJS by default, but we get better tree shaking if we
