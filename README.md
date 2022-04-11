@@ -1,5 +1,11 @@
 # Monaco Tailwindcss
 
+[![ci workflow](https://github.com/remcohaszing/monaco-tailwindcss/actions/workflows/ci.yaml/badge.svg)](https://github.com/remcohaszing/monaco-tailwindcss/actions/workflows/ci.yaml)
+[![npm version](https://img.shields.io/npm/v/monaco-tailwindcss)](https://www.npmjs.com/package/monaco-tailwindcss)
+[![prettier code style](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io)
+[![demo](https://img.shields.io/badge/demo-monaco--yaml.js.org-61ffcf.svg)](https://monaco-tailwindcss.js.org)
+[![netlify Status](https://api.netlify.com/api/v1/badges/d56b5f9b-3adc-4c22-a355-761e72c774ab/deploy-status)](https://app.netlify.com/sites/monaco-tailwindcss/deploys)
+
 [Tailwindcss](https://tailwindcss.com) integration for
 [Monaco editor](https://microsoft.github.io/monaco-editor). (Work in progress)
 
@@ -82,4 +88,4 @@ window.MonacoEnvironment = {
 
 ## License
 
-[MIT](https://github.com/remcohaszing/monaco-yaml/blob/main/LICENSE.md)
+[MIT](https://github.com/remcohaszing/monaco-tailwindcss/blob/main/LICENSE.md)
