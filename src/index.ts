@@ -60,8 +60,8 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
 
     return {
       dispose() {
-        while (disposables.length) {
-          disposables.pop()?.dispose();
+        for (const disposable of disposables) {
+          disposable.dispose();
         }
       },
 
