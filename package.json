@@ -31,7 +31,7 @@
   "bugs": {
     "url": "https://github.com/remcohaszing/monaco-tailwindcss/issues"
   },
-  "homepage": "https://github.com/remcohaszing/monaco-tailwindcss#readme",
+  "homepage": "https://monaco-tailwindcss.js.org",
   "dependencies": {
     "@ctrl/tinycolor": "^3.0.0",
     "color-name": "^1.0.0",
