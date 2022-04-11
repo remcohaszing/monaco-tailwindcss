@@ -71,6 +71,8 @@ await build({
           resolve('culori/build/culori.js', options),
         );
 
+        // CJS doesn’t require extensions, but ESM does. Since our package uses ESM, but dependant
+        // bundled packages don’t, we need to add it ourselves.
         onResolve({ filter: /^postcss-selector-parser\/.*\/\w+$/ }, ({ path, ...options }) =>
           resolve(`${path}.js`, options),
         );
