@@ -73,7 +73,8 @@ h1 {
   transition: 0.3s;
 }
 
-.tabs > a:hover {
+.tabs > a:hover,
+.tabs > a:target {
   background: var(--shadow-color);
 }
 
