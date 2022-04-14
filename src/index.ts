@@ -37,11 +37,6 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
         languageSelector,
         createHoverProvider(workerManager.getWorker),
       ),
-      registerMarkerDataProvider(
-        { editor },
-        'html',
-        createMarkerDataProvider(workerManager.getWorker),
-      ),
     ];
 
     // Monaco editor doesn’t provide a function to match language selectors, so let’s just support
@@ -50,10 +45,12 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
       ? languageSelector
       : [languageSelector]) {
       if (typeof language === 'string') {
-        registerMarkerDataProvider(
-          { editor },
-          language,
-          createMarkerDataProvider(workerManager.getWorker),
+        disposables.push(
+          registerMarkerDataProvider(
+            { editor },
+            language,
+            createMarkerDataProvider(workerManager.getWorker),
+          ),
         );
       }
     }

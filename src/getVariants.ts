@@ -1,4 +1,4 @@
-import { AtRule, Container, Node } from 'postcss';
+import { AtRule, Node } from 'postcss';
 
 import { JitState } from './types';
 
@@ -6,7 +6,7 @@ function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
 
-export default function getVariants(state: JitState): Record<string, string | null> {
+export function getVariants(state: JitState): Record<string, string | null> {
   function escape(className: string): string {
     const node = state.modules.postcssSelectorParser.module.className({ value: className });
     return node.value;
@@ -35,10 +35,10 @@ export default function getVariants(state: JitState): Record<string, string | nu
       const returnValue = fn({
         container,
         separator: state.separator,
-        format(def: string) {
+        format(def) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');
         },
-        wrap(rule: Container) {
+        wrap(rule) {
           if (isAtRule(rule)) {
             definition = `@${rule.name} ${rule.params}`;
           }
