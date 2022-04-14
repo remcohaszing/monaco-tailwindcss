@@ -22,13 +22,13 @@ editor.create(document.getElementById('editor'), {
   automaticLayout: true,
   language: 'html',
   value: `<!doctype html>
-  <html lang="en">
-    <head>
-      <meta charset="utf-8" />
-    </head>
-    <body>
-      <div class="w-6 w-6 h-6 text-gray-600 bg-[#ff8888] hover:text-sky-600 ring-gray-900/5"></div>
-    </body>
-  </html>
-  `,
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <div class="w-6 w-6 h-6 text-gray-600 bg-[#ff8888] hover:text-sky-600 ring-gray-900/5"></div>
+  </body>
+</html>
+`,
 });
