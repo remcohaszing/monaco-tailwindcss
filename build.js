@@ -1,5 +1,5 @@
-import { readFile } from 'fs/promises';
-import { sep } from 'path';
+import { readdir, readFile } from 'fs/promises';
+import { parse, sep } from 'path';
 import { fileURLToPath } from 'url';
 
 import { build } from 'esbuild';
@@ -22,18 +22,16 @@ await build({
   plugins: [
     {
       name: 'alias',
-      setup({ onResolve, resolve }) {
+      async setup({ onResolve, resolve }) {
+        const stubFiles = await readdir('src/stubs', { withFileTypes: true });
         // These packages are imported, but can be stubbed.
-        onResolve(
-          {
-            filter:
-              /^(detect-indent|chalk|fs|path|url|util|util-deprecate|vscode-emmet-helper-bundled)$/,
-          },
-          ({ path }) => ({
-            path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
-            sideEffects: false,
-          }),
-        );
+        const stubNames = stubFiles
+          .filter((file) => file.isFile())
+          .map((file) => parse(file.name).name);
+        onResolve({ filter: new RegExp(`^(${stubNames.join('|')})$`) }, ({ path }) => ({
+          path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
+          sideEffects: false,
+        }));
 
         // The tailwindcss main export exports CJS, but we can get better tree shaking if we import
         // from the ESM src directoy instead.
