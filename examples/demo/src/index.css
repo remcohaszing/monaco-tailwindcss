@@ -1,6 +1,7 @@
 :root {
   --background-color: hsl(0, 0%, 96%);
   --editor-background: hsl(60, 100%, 100%);
+  --error-color: hsl(0, 85%, 62%);
   --foreground-color: hsl(0, 0%, 0%);
   --primary-color: hsl(189, 100%, 63%);
   --shadow-color: hsla(0, 0%, 27%, 0.239);
@@ -13,7 +14,6 @@
     --editor-background: hsl(0, 0%, 12%);
     --foreground-color: hsl(0, 0%, 100%);
     --shadow-color: hsl(0, 0%, 43%);
-    --warning-color: hsl(49, 100%, 40%);
   }
 }
 
