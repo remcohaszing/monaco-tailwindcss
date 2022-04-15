@@ -36,9 +36,10 @@
     "@ctrl/tinycolor": "^3.0.0",
     "color-name": "^1.0.0",
     "css.escape": "^1.0.0",
+    "dlv": "^1.0.0",
     "line-column": "^1.0.0",
     "monaco-marker-data-provider": "^1.0.0",
-    "monaco-worker-manager": "^1.0.0",
+    "monaco-worker-manager": "^2.0.0",
     "moo": "^0.5.0",
     "multi-regexp2": "^1.0.0",
     "postcss": "^8.0.0",
@@ -48,6 +49,7 @@
     "semver": "^7.0.0",
     "sift-string": "^0.0.2",
     "stringify-object": "^4.0.0",
+    "tmp-cache": "^1.0.0",
     "vscode-languageserver-textdocument": "^1.0.0"
   },
   "peerDependencies": {
@@ -60,7 +62,7 @@
     "eslint-config-remcohaszing": "^3.0.0",
     "prettier": "^2.0.0",
     "tailwindcss": "^3.0.0",
-    "tailwindcss-language-service": "0.0.23",
+    "tailwindcss-language-service": "0.0.24",
     "vscode-languageserver-protocol": "^3.0.0",
     "vscode-languageserver-types": "^3.0.0"
   },

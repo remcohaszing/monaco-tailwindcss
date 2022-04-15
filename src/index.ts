@@ -17,11 +17,14 @@ export { tailwindcssData } from './cssData';
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
   ({ tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {
-    const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>({
-      label: 'tailwindcss',
-      moduleId: 'monaco-tailwindcss/tailwindcss.worker',
-      createData: { tailwindConfig },
-    });
+    const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>(
+      { editor },
+      {
+        label: 'tailwindcss',
+        moduleId: 'monaco-tailwindcss/tailwindcss.worker',
+        createData: { tailwindConfig },
+      },
+    );
 
     const disposables = [
       workerManager,
