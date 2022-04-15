@@ -4,7 +4,6 @@ import postcss from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
 import {
   AugmentedDiagnostic,
-  // CompletionsFromClassList,
   doComplete,
   doHover,
   doValidate,
@@ -27,12 +26,8 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import getVariants from './getVariants.js';
+import { getVariants } from './getVariants.js';
 import { JitState } from './types';
-
-function isObject(value: unknown): value is object {
-  return typeof value === 'object' && value != null;
-}
 
 export interface TailwindcssWorker {
   doComplete: (
@@ -56,10 +51,6 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
     options.tailwindConfig ?? ({} as Partial<TailwindConfig> as TailwindConfig),
   );
 
-  // Const lspRoot = await postcss([
-  //   tailwindcss({ ...config, mode: 'aot', purge: false, variants: [] }),
-  // ]).process();
-
   const jitContext = createContext(config);
 
   const state: JitState = {
@@ -79,12 +70,10 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       classNames: {},
       context: {},
     },
-    // ClassNames: extractClasses(lspRoot),
-
     jit: true,
     jitContext,
     separator: ':',
-    screens: isObject(config.theme.screens) ? Object.keys(config.theme.screens) : [],
+    screens: config.theme.screens ? Object.keys(config.theme.screens) : [],
     editor: {
       userLanguages: {},
       // @ts-expect-error this is poorly typed
