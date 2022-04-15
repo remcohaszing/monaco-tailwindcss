@@ -1,7 +1,8 @@
-import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
+import { editor, languages, Uri } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { registerMarkerDataProvider } from 'monaco-marker-data-provider';
-import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
+import { ModelLike, MonacoTailwindcssOptions } from 'monaco-tailwindcss';
 import { createWorkerManager } from 'monaco-worker-manager';
+import { ChangedContent } from 'tailwindcss/src/lib/setupContextUtils.js';
 
 import {
   createColorProvider,
@@ -14,6 +15,20 @@ import { TailwindcssWorker } from './tailwindcss.worker';
 export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typescript'] as const;
 
 export { tailwindcssData } from './cssData';
+
+function parseModelLike(value: ModelLike): ChangedContent {
+  const modelOrString = Uri.isUri(value) ? editor.getModel(value) : value;
+  if (!modelOrString) {
+    return { content: '' };
+  }
+  if (typeof modelOrString === 'string') {
+    return { content: modelOrString };
+  }
+  return {
+    content: modelOrString.getValue(),
+    extension: modelOrString.getLanguageId(),
+  };
+}
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
   ({ tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {
@@ -69,10 +84,13 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
         workerManager.updateCreateData({ tailwindConfig: newTailwindConfig });
       },
 
-      async generateStylesFromContent(model) {
-        const client = await workerManager.getWorker(model.uri);
+      async generateStylesFromContent(css, content) {
+        const client = await workerManager.getWorker();
 
-        return client.generateStylesFromContent(String(model.uri));
+        return client.generateStylesFromContent(
+          parseModelLike(css).content,
+          content.map(parseModelLike),
+        );
       },
     };
   };

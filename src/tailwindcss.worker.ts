@@ -13,8 +13,8 @@ import {
 } from 'tailwindcss-language-service';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
 import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
-import { createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
-import processTailwindFeatures, { SetupContext } from 'tailwindcss/src/processTailwindFeatures.js';
+import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { CompletionContext } from 'vscode-languageserver-protocol';
@@ -42,7 +42,7 @@ export interface TailwindcssWorker {
 
   doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[];
 
-  generateStylesFromContent: (uri: string) => string;
+  generateStylesFromContent: (css: string, content: ChangedContent[]) => string;
 
   getDocumentColors: (uri: string, languageId: string) => ColorInformation[];
 
@@ -55,12 +55,6 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
   );
 
   const jitContext = createContext(config);
-
-  jitContext.changedContent.push({
-    content: 'text-sky-500',
-  });
-
-  console.log(jitContext);
 
   const state: JitState = {
     version: '3.0.0',
@@ -115,10 +109,6 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
     .filter((className) => className !== '*')
     .map((className) => [className, { color: getColor(state, className) }]);
 
-  const jitContextGetter: SetupContext = () => jitContext;
-  const tailwind = processTailwindFeatures(() => jitContextGetter);
-  const processor = postcss([tailwind]);
-
   const getTextDocument = (uri: string, languageId: string): TextDocument | undefined => {
     const models = ctx.getMirrorModels();
     for (const model of models) {
@@ -159,15 +149,14 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
       return doValidate(state, textDocument);
     },
 
-    async generateStylesFromContent(uri) {
-      const textDocument = getTextDocument(uri, 'css');
+    async generateStylesFromContent(css, content) {
+      const tailwind = processTailwindFeatures(
+        (processOptions) => () => processOptions.createContext(config, content),
+      );
+      const processor = postcss([tailwind]);
 
-      if (!textDocument) {
-        return '';
-      }
-
-      const { css } = await processor.process(textDocument.getText(), { from: uri });
-      return css;
+      const result = await processor.process(css);
+      return result.css;
     },
 
     getDocumentColors(uri, languageId) {

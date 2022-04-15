@@ -14,6 +14,11 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
   import { Container } from 'postcss';
   import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
+  interface ChangedContent {
+    content: string;
+    extension?: string;
+  }
+
   interface Api {
     container: Container;
     separator: string;
@@ -28,17 +33,21 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
   type VariantName = string;
 
   export interface JitContext {
+    changedContent: ChangedContent[];
     getClassList: () => string[];
     variantMap: Map<VariantName, VariantFn[]>;
   }
 
-  export function createContext(config: TailwindConfig): JitContext;
+  export function createContext(
+    config: TailwindConfig,
+    changedContent?: ChangedContent[],
+  ): JitContext;
 }
 
 declare module 'tailwindcss/src/processTailwindFeatures.js' {
   // eslint-disable-next-line @typescript-eslint/no-duplicate-imports
   import { AtRule, Plugin, Result, Root } from 'postcss';
-  import { JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+  import { ChangedContent, JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
   // eslint-disable-next-line @typescript-eslint/no-duplicate-imports
   import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
@@ -46,7 +55,7 @@ declare module 'tailwindcss/src/processTailwindFeatures.js' {
 
   interface ProcessTailwindFeaturesCallbackOptions {
     applyDirectives: Set<AtRule>;
-    createContext: (config: TailwindConfig) => JitContext;
+    createContext: (config: TailwindConfig, changedContent: ChangedContent[]) => JitContext;
     registerDependency: () => unknown;
     tailwindDirectives: Set<string>;
   }
