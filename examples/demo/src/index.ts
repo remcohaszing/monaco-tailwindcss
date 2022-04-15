@@ -1,6 +1,6 @@
 import './index.css';
 import { parse } from 'jsonc-parser';
-import { editor, Environment, languages, Uri } from 'monaco-editor';
+import { editor, Environment, languages, MarkerSeverity, Uri } from 'monaco-editor';
 import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
@@ -186,8 +186,40 @@ const ed = editor.create(document.getElementById('editor')!, {
   model: getModel(),
 });
 
+function updateMarkers(resource: Uri): void {
+  const problems = document.getElementById('problems')!;
+  const markers = editor.getModelMarkers({ resource });
+  while (problems.lastChild) {
+    problems.lastChild.remove();
+  }
+  for (const marker of markers) {
+    if (marker.severity === MarkerSeverity.Hint) {
+      continue;
+    }
+    const wrapper = document.createElement('div');
+    wrapper.setAttribute('role', 'button');
+    const codicon = document.createElement('div');
+    const text = document.createElement('div');
+    wrapper.classList.add('problem');
+    codicon.classList.add(
+      'codicon',
+      marker.severity === MarkerSeverity.Warning ? 'codicon-warning' : 'codicon-error',
+    );
+    text.classList.add('problem-text');
+    text.textContent = marker.message;
+    wrapper.append(codicon, text);
+    wrapper.addEventListener('click', () => {
+      ed.setPosition({ lineNumber: marker.startLineNumber, column: marker.startColumn });
+      ed.focus();
+    });
+    problems.append(wrapper);
+  }
+}
+
 window.addEventListener('hashchange', () => {
-  ed.setModel(getModel());
+  const model = getModel();
+  ed.setModel(model);
+  updateMarkers(model.uri);
 });
 
 tailwindrcModel.onDidChangeContent(() => {
@@ -204,4 +236,10 @@ tailwindrcModel.onDidChangeContent(() => {
     return;
   }
   monacoTailwindcss.setTailwindConfig(newConfig as TailwindConfig);
+});
+
+editor.onDidChangeMarkers(([resource]) => {
+  if (String(resource) === String(getModel().uri)) {
+    updateMarkers(resource);
+  }
 });
