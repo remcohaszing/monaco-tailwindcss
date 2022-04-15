@@ -35,6 +35,27 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
   export function createContext(config: TailwindConfig): JitContext;
 }
 
+declare module 'tailwindcss/src/processTailwindFeatures.js' {
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-imports
+  import { AtRule, Plugin, Result, Root } from 'postcss';
+  import { JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-imports
+  import { TailwindConfig } from 'tailwindcss/tailwind-config';
+
+  type SetupContext = (root: Root, result: Result) => JitContext;
+
+  interface ProcessTailwindFeaturesCallbackOptions {
+    applyDirectives: Set<AtRule>;
+    createContext: (config: TailwindConfig) => JitContext;
+    registerDependency: () => unknown;
+    tailwindDirectives: Set<string>;
+  }
+
+  export default function processTailwindFeatures(
+    callback: (options: ProcessTailwindFeaturesCallbackOptions) => SetupContext,
+  ): Plugin;
+}
+
 declare module 'tailwindcss/src/public/resolve-config.js' {
   export { default } from 'tailwindcss/resolveConfig';
 }

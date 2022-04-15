@@ -1,4 +1,4 @@
-import { IDisposable, languages } from 'monaco-editor';
+import { editor, IDisposable, languages } from 'monaco-editor';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
 export interface MonacoTailwindcssOptions {
@@ -12,6 +12,8 @@ export interface MonacoTailwindcssOptions {
 
 export interface MonacoTailwindcss extends IDisposable {
   setTailwindConfig: (tailwindConfig: TailwindConfig) => void;
+
+  generateStylesFromContent: (model: editor.ITextModel) => Promise<string>;
 }
 
 export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): MonacoTailwindcss;

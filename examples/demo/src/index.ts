@@ -179,9 +179,10 @@ languages.register({
   aliases: ['MDX', 'mdx'],
 });
 
+const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light';
 const ed = editor.create(document.getElementById('editor')!, {
   automaticLayout: true,
-  theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light',
+  theme,
   colorDecorators: true,
   model: getModel(),
 });
@@ -242,4 +243,21 @@ editor.onDidChangeMarkers(([resource]) => {
   if (String(resource) === String(getModel().uri)) {
     updateMarkers(resource);
   }
+});
+
+const outputPane = document.getElementById('output')!;
+const problemsPane = document.getElementById('problems')!;
+
+document.getElementById('problems-button')!.addEventListener('click', () => {
+  outputPane.hidden = true;
+  problemsPane.hidden = false;
+});
+
+document.getElementById('output-button')!.addEventListener('click', () => {
+  problemsPane.hidden = true;
+  outputPane.hidden = false;
+  monacoTailwindcss.generateStylesFromContent(cssModel).then((content) => {
+    outputPane.textContent = content;
+    editor.colorizeElement(outputPane, { mimeType: 'css', theme });
+  });
 });

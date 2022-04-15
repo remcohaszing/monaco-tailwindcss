@@ -68,5 +68,11 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
       setTailwindConfig(newTailwindConfig) {
         workerManager.updateCreateData({ tailwindConfig: newTailwindConfig });
       },
+
+      async generateStylesFromContent(model) {
+        const client = await workerManager.getWorker(model.uri);
+
+        return client.generateStylesFromContent(String(model.uri));
+      },
     };
   };
