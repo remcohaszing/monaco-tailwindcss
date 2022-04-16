@@ -29,7 +29,7 @@ await build({
         const stubNames = stubFiles
           .filter((file) => file.isFile())
           .map((file) => parse(file.name).name);
-        onResolve({ filter: new RegExp(`^(${stubNames.join('|')})(\\/|$)`) }, ({ path }) => ({
+        onResolve({ filter: new RegExp(`^(${stubNames.join('|')})$`) }, ({ path }) => ({
           path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
           sideEffects: false,
         }));
