@@ -4,13 +4,14 @@ import { fileURLToPath } from 'url';
 
 import { build } from 'esbuild';
 
+const [, , logLevel = 'info'] = process.argv;
 const pkg = JSON.parse(await readFile(new URL('package.json', import.meta.url)));
 
 await build({
   entryPoints: ['src/index.ts', 'src/tailwindcss.worker.ts'],
   bundle: true,
   external: Object.keys({ ...pkg.dependencies, ...pkg.peerDependencies }),
-  logLevel: 'info',
+  logLevel,
   outdir: '.',
   sourcemap: true,
   format: 'esm',
@@ -22,7 +23,7 @@ await build({
   plugins: [
     {
       name: 'alias',
-      async setup({ onResolve, resolve }) {
+      async setup({ onLoad, onResolve, resolve }) {
         const stubFiles = await readdir('src/stubs', { withFileTypes: true });
         // These packages are imported, but can be stubbed.
         const stubNames = stubFiles
@@ -78,6 +79,14 @@ await build({
         // None of our dependencies use side effects, but many packages don’t explicitly define
         // this.
         onResolve({ filter: /.*/ }, () => ({ sideEffects: false }));
+
+        // Rewrite the tailwind stubs from CJS to ESM, so our bundle doesn’t need to include any CJS
+        // related logic.
+        onLoad({ filter: /\/tailwindcss\/stubs\/defaultConfig\.stub\.js$/ }, async ({ path }) => {
+          const cjs = await readFile(path, 'utf8');
+          const esm = cjs.replace('module.exports =', 'export default');
+          return { contents: esm };
+        });
       },
     },
   ],
