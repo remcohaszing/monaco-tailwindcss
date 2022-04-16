@@ -18,7 +18,7 @@ await build({
   target: ['es2020'],
   define: {
     'process.env.DEBUG': 'undefined',
-    'process.env.JEST_WORKER_ID': 'undefined',
+    'process.env.JEST_WORKER_ID': '1',
     __dirname: '"/"',
   },
   plugins: [
