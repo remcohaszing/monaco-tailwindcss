@@ -3,9 +3,6 @@ import HtmlWebPackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
 export default {
-  // Output: {
-  //   filename: '[contenthash].js',
-  // },
   devtool: 'source-map',
   resolve: {
     extensions: ['.mjs', '.js', '.ts'],
