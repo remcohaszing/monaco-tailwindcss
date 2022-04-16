@@ -3,7 +3,7 @@
 [![ci workflow](https://github.com/remcohaszing/monaco-tailwindcss/actions/workflows/ci.yaml/badge.svg)](https://github.com/remcohaszing/monaco-tailwindcss/actions/workflows/ci.yaml)
 [![npm version](https://img.shields.io/npm/v/monaco-tailwindcss)](https://www.npmjs.com/package/monaco-tailwindcss)
 [![prettier code style](https://img.shields.io/badge/code_style-prettier-ff69b4.svg)](https://prettier.io)
-[![demo](https://img.shields.io/badge/demo-monaco--yaml.js.org-61ffcf.svg)](https://monaco-tailwindcss.js.org)
+[![demo](https://img.shields.io/badge/demo-monaco--tailwindcss.js.org-61ffcf.svg)](https://monaco-tailwindcss.js.org)
 [![netlify Status](https://api.netlify.com/api/v1/badges/d56b5f9b-3adc-4c22-a355-761e72c774ab/deploy-status)](https://app.netlify.com/sites/monaco-tailwindcss/deploys)
 
 [Tailwindcss](https://tailwindcss.com) integration for
@@ -34,7 +34,7 @@ languages.css.cssDefaults.setOptions({
 configureMonacoTailwindcss();
 
 editor.create(document.createElement('editor'), {
-  language: 'yaml',
+  language: 'html',
   value: `<!doctype html>
 <html lang="en">
   <head>
