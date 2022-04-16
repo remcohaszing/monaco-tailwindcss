@@ -46,11 +46,7 @@ export interface TailwindcssWorker {
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
 
-initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
-  const config = resolveConfig(
-    options.tailwindConfig ?? ({} as Partial<TailwindConfig> as TailwindConfig),
-  );
-
+function stateFromConfig(config: TailwindConfig): JitState {
   const jitContext = createContext(config);
 
   const state: JitState = {
@@ -105,6 +101,16 @@ initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
     .getClassList()
     .filter((className) => className !== '*')
     .map((className) => [className, { color: getColor(state, className) }]);
+
+  return state;
+}
+
+initialize<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
+  const config = resolveConfig(
+    options.tailwindConfig ?? ({} as Partial<TailwindConfig> as TailwindConfig),
+  );
+
+  const state = stateFromConfig(config);
 
   const getTextDocument = (uri: string, languageId: string): TextDocument | undefined => {
     const models = ctx.getMirrorModels();
