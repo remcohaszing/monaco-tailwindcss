@@ -32,7 +32,7 @@ export function getVariants(state: JitState): Record<string, string | null> {
       const container = root.clone();
       const returnValue = fn({
         container,
-        separator: state.separator,
+        separator: state.separator!,
         format(def) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');
         },
