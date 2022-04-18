@@ -60,7 +60,10 @@ window.MonacoEnvironment = {
           new URL('monaco-editor/esm/vs/language/json/json.worker.js', import.meta.url),
         );
       case 'tailwindcss':
-        return new Worker(new URL('monaco-tailwindcss/tailwindcss.worker.js', import.meta.url));
+        // We are using a custom worker instead of the default
+        // 'monaco-tailwindcss/tailwindcss.worker.js'
+        // This way we can enable custom plugins
+        return new Worker(new URL('tailwindcssplugin.worker.js', import.meta.url));
       default:
         throw new Error(`Unknown label ${label}`);
     }
