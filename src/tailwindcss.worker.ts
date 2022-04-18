@@ -12,6 +12,7 @@ import {
   getDocumentColors,
   resolveCompletionItem,
 } from 'tailwindcss-language-service';
+import preflight from 'tailwindcss/src/css/preflight.css';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
 import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
 import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
