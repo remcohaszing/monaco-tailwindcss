@@ -14,8 +14,6 @@ export function getVariants(state: JitState): Record<string, string | null> {
 
   const result: Record<string, string | null> = {};
   for (const [variantName, variantIdsAndFns] of state.jitContext.variantMap) {
-    const fns = variantIdsAndFns.map(([, fn]) => fn);
-
     const placeholder = '__variant_placeholder__';
 
     const root = state.modules.postcss.module.root({
@@ -29,7 +27,7 @@ export function getVariants(state: JitState): Record<string, string | null> {
 
     const definitions: string[] = [];
 
-    for (const fn of fns) {
+    for (const [, fn] of variantIdsAndFns) {
       let definition: string | undefined;
       const container = root.clone();
       const returnValue = fn({
