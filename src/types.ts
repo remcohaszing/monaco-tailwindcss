@@ -7,7 +7,6 @@ import { createContext, JitContext } from 'tailwindcss/src/lib/setupContextUtils
 
 export interface JitState extends State {
   config: object;
-  separator: string;
   jitContext: JitContext;
   modules: {
     postcss: {

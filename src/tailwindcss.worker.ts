@@ -69,7 +69,7 @@ function stateFromConfig(config: TailwindConfig): JitState {
     },
     jit: true,
     jitContext,
-    separator: ':',
+    separator: config.separator,
     screens: config.theme.screens ? Object.keys(config.theme.screens) : [],
     editor: {
       userLanguages: {},
