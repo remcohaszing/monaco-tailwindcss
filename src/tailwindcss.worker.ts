@@ -71,6 +71,7 @@ function stateFromConfig(config: TailwindConfig): JitState {
     jitContext,
     separator: config.separator,
     screens: config.theme.screens ? Object.keys(config.theme.screens) : [],
+    variants: getVariants(jitContext),
     editor: {
       userLanguages: {},
       // @ts-expect-error this is poorly typed
@@ -95,8 +96,6 @@ function stateFromConfig(config: TailwindConfig): JitState {
       },
     },
   };
-
-  state.variants = getVariants(state);
 
   state.classList = jitContext
     .getClassList()
