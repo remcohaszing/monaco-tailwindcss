@@ -29,6 +29,7 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
 
   export interface JitContext {
     getClassList: () => string[];
+    tailwindConfig: TailwindConfig;
     variantMap: Map<VariantName, VariantFn[]>;
   }
 
