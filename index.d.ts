@@ -7,7 +7,7 @@ export interface MonacoTailwindcssOptions {
    */
   languageSelector?: languages.LanguageSelector;
 
-  tailwindConfig?: TailwindConfig;
+  tailwindConfig?: TailwindConfig | string;
 }
 
 export interface MonacoTailwindcss extends IDisposable {

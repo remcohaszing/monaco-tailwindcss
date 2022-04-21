@@ -47,7 +47,11 @@ export interface TailwindcssWorker {
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
 
-function stateFromConfig(config: TailwindConfig): JitState {
+async function stateFromConfig(
+  configPromise: PromiseLike<TailwindConfig> | TailwindConfig,
+): Promise<JitState> {
+  const preparedTailwindConfig = await configPromise;
+  const config = resolveConfig(preparedTailwindConfig);
   const jitContext = createContext(config);
 
   const state: JitState = {
@@ -111,10 +115,15 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
       tailwindWorkerOptions?.prepareTailwindConfig?.(options.tailwindConfig) ??
       options.tailwindConfig ??
       ({} as TailwindConfig);
+    if (typeof preparedTailwindConfig !== 'object') {
+      throw new TypeError(
+        `Expected tailwindConfig to resolve to an object, but got: ${JSON.stringify(
+          preparedTailwindConfig,
+        )}`,
+      );
+    }
 
-    const config = resolveConfig(preparedTailwindConfig);
-
-    const state = stateFromConfig(config);
+    const statePromise = stateFromConfig(preparedTailwindConfig);
 
     const getTextDocument = (uri: string, languageId: string): TextDocument | undefined => {
       const models = ctx.getMirrorModels();
@@ -126,48 +135,48 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
     };
 
     return {
-      doComplete(uri, languageId, position, context) {
+      async doComplete(uri, languageId, position, context) {
         const textDocument = getTextDocument(uri, languageId);
 
         if (!textDocument) {
           return;
         }
 
-        return doComplete(state, textDocument, position, context);
+        return doComplete(await statePromise, textDocument, position, context);
       },
 
-      doHover(uri, languageId, position) {
+      async doHover(uri, languageId, position) {
         const textDocument = getTextDocument(uri, languageId);
 
         if (!textDocument) {
           return;
         }
 
-        return doHover(state, textDocument, position);
+        return doHover(await statePromise, textDocument, position);
       },
 
-      doValidate(uri, languageId) {
+      async doValidate(uri, languageId) {
         const textDocument = getTextDocument(uri, languageId);
 
         if (!textDocument) {
           return [];
         }
 
-        return doValidate(state, textDocument);
+        return doValidate(await statePromise, textDocument);
       },
 
-      getDocumentColors(uri, languageId) {
+      async getDocumentColors(uri, languageId) {
         const textDocument = getTextDocument(uri, languageId);
 
         if (!textDocument) {
           return [];
         }
 
-        return getDocumentColors(state, textDocument);
+        return getDocumentColors(await statePromise, textDocument);
       },
 
-      resolveCompletionItem(item) {
-        return resolveCompletionItem(state, item);
+      async resolveCompletionItem(item) {
+        return resolveCompletionItem(await statePromise, item);
       },
     };
   });
