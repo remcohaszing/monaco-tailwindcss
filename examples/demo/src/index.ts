@@ -209,8 +209,8 @@ outputButton.addEventListener('click', () => {
 
 async function generateOutput(): Promise<void> {
   const content = await monacoTailwindcss.generateStylesFromContent(cssModel.getValue(), [
-    htmlModel,
-    mdxModel,
+    { content: htmlModel.getValue(), extension: htmlModel.getLanguageId() },
+    { content: mdxModel.getValue(), extension: mdxModel.getLanguageId() },
   ]);
   outputPane.textContent = content;
   editor.colorizeElement(outputPane, { mimeType: 'css', theme });

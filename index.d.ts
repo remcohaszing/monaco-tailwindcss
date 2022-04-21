@@ -1,4 +1,4 @@
-import { editor, IDisposable, languages, Uri } from 'monaco-editor';
+import { IDisposable, languages } from 'monaco-editor';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
 export interface MonacoTailwindcssOptions {
@@ -14,7 +14,10 @@ export interface MonacoTailwindcssOptions {
  * This type represents either a string value, a model whose value will be retrieved, or a URI which
  * refers to the model whose value to get.
  */
-export type ModelLike = editor.ITextModel | Uri | string;
+export interface Content {
+  content: string;
+  extension?: string;
+}
 
 export interface MonacoTailwindcss extends IDisposable {
   setTailwindConfig: (tailwindConfig: TailwindConfig) => void;
@@ -35,7 +38,7 @@ export interface MonacoTailwindcss extends IDisposable {
    *   editor.getModels().filter((model) => model.getLanguageId() === 'html')
    * )
    */
-  generateStylesFromContent: (css: ModelLike, content: ModelLike[]) => Promise<string>;
+  generateStylesFromContent: (css: string, content: (Content | string)[]) => Promise<string>;
 }
 
 export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): MonacoTailwindcss;
