@@ -12,7 +12,8 @@ export interface MonacoTailwindcssOptions {
 
 /**
  * Contains the content of CSS classes to extract.
- * With optional "extension" key, which might be relevant to properly extract css classed based on the content language.
+ * With optional "extension" key, which might be relevant
+ * to properly extract css classed based on the content language.
  */
 export interface Content {
   content: string;
