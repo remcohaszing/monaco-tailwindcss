@@ -11,8 +11,8 @@ export interface MonacoTailwindcssOptions {
 }
 
 /**
- * This type represents either a string value, a model whose value will be retrieved, or a URI which
- * refers to the model whose value to get.
+ * Contains the content of CSS classes to extract.
+ * With optional "extension" key, which might be relevant to properly extract css classed based on the content language.
  */
 export interface Content {
   content: string;
