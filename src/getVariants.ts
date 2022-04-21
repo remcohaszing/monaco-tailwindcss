@@ -1,26 +1,24 @@
-import { AtRule, Node } from 'postcss';
-
-import { JitState } from './types';
+import postcss, { AtRule, Node } from 'postcss';
+import postcssSelectorParser from 'postcss-selector-parser';
+import { JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 
 function isAtRule(node: Node): node is AtRule {
   return node.type === 'atrule';
 }
 
-export function getVariants(state: JitState): Record<string, string | null> {
-  function escape(className: string): string {
-    const node = state.modules.postcssSelectorParser.module.className({ value: className });
-    return node.value;
-  }
+function escape(className: string): string {
+  const node = postcssSelectorParser.className({ value: className });
+  return node.value;
+}
 
+export function getVariants(jitContext: JitContext): Record<string, string | null> {
   const result: Record<string, string | null> = {};
-  for (const [variantName, variantIdsAndFns] of state.jitContext.variantMap) {
-    const fns = variantIdsAndFns.map(([, fn]) => fn);
-
+  for (const [variantName, variantIdsAndFns] of jitContext.variantMap) {
     const placeholder = '__variant_placeholder__';
 
-    const root = state.modules.postcss.module.root({
+    const root = postcss.root({
       nodes: [
-        state.modules.postcss.module.rule({
+        postcss.rule({
           selector: `.${escape(placeholder)}`,
           nodes: [],
         }),
@@ -29,12 +27,12 @@ export function getVariants(state: JitState): Record<string, string | null> {
 
     const definitions: string[] = [];
 
-    for (const fn of fns) {
+    for (const [, fn] of variantIdsAndFns) {
       let definition: string | undefined;
       const container = root.clone();
       const returnValue = fn({
         container,
-        separator: state.separator,
+        separator: jitContext.tailwindConfig.separator!,
         format(def) {
           definition = def.replace(/:merge\(([^)]+)\)/g, '$1');
         },
