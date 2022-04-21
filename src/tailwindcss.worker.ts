@@ -14,7 +14,8 @@ import {
 } from 'tailwindcss-language-service';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
 import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
-import { createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { CompletionContext } from 'vscode-languageserver-protocol';
@@ -38,11 +39,13 @@ export interface TailwindcssWorker {
     context: CompletionContext,
   ) => CompletionList | undefined;
 
-  getDocumentColors: (uri: string, languageId: string) => ColorInformation[];
-
   doHover: (uri: string, languageId: string, position: Position) => Hover | undefined;
 
   doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[];
+
+  generateStylesFromContent: (css: string, content: ChangedContent[]) => string;
+
+  getDocumentColors: (uri: string, languageId: string) => ColorInformation[];
 
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
@@ -163,6 +166,17 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
         }
 
         return doValidate(await statePromise, textDocument);
+      },
+
+      async generateStylesFromContent(css, content) {
+        const { config } = await statePromise;
+        const tailwind = processTailwindFeatures(
+          (processOptions) => () => processOptions.createContext(config, content),
+        );
+        const processor = postcss([tailwind]);
+
+        const result = await processor.process(css);
+        return result.css;
       },
 
       async getDocumentColors(uri, languageId) {

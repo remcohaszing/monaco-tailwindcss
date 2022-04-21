@@ -16,8 +16,10 @@ await build({
   sourcemap: true,
   format: 'esm',
   target: ['es2020'],
+  loader: { '.css': 'text' },
   define: {
     'process.env.DEBUG': 'undefined',
+    'process.env.JEST_WORKER_ID': '1',
     __dirname: '"/"',
   },
   plugins: [

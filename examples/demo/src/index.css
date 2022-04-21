@@ -79,19 +79,30 @@ main {
   transition: background 0.3s;
 }
 
+.tabs > button:hover,
 .tabs > a:hover,
 .tabs > a:target {
   background: var(--shadow-color);
+}
+
+.tabs > button {
+  background: transparent;
+  border: none;
+  color: var(--foreground-color);
+  cursor: pointer;
+  padding: 0.5rem 2rem;
 }
 
 #editor {
   flex: 1 1 auto;
 }
 
-#problems {
+#problems,
+#output {
   border-top: 1px solid var(--shadow-color);
   flex: 0 0 20vh;
   color: var(--foreground-color);
+  margin: 0;
   overflow-y: scroll;
 }
 

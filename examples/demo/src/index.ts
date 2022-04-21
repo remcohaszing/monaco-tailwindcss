@@ -143,6 +143,8 @@ const htmlModel = editor.createModel(
     <p class="text-ocean-500 bg-lava">
       Custom colors are supported too!
     </p>
+
+    <button class="btn-blue"></button>
   </body>
 </html>
 `,
@@ -153,7 +155,7 @@ const mdxModel = editor.createModel(
 
 # Hello MDX
 
-<MyComponent className="text-gray-600">
+<MyComponent className="text-green-700">
 
   This is **also** markdown.
 
@@ -182,12 +184,42 @@ languages.register({
   aliases: ['MDX', 'mdx'],
 });
 
+const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light';
 const ed = editor.create(document.getElementById('editor')!, {
   automaticLayout: true,
-  theme: window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light',
+  theme,
   colorDecorators: true,
   model: getModel(),
 });
+
+const outputPane = document.getElementById('output')!;
+const problemsPane = document.getElementById('problems')!;
+const outputButton = document.getElementById('output-button')!;
+const problemsButton = document.getElementById('problems-button')!;
+
+problemsButton.addEventListener('click', () => {
+  outputPane.hidden = true;
+  problemsPane.hidden = false;
+});
+
+outputButton.addEventListener('click', () => {
+  problemsPane.hidden = true;
+  outputPane.hidden = false;
+});
+
+async function generateOutput(): Promise<void> {
+  const content = await monacoTailwindcss.generateStylesFromContent(cssModel.getValue(), [
+    { content: htmlModel.getValue(), extension: htmlModel.getLanguageId() },
+    { content: mdxModel.getValue(), extension: mdxModel.getLanguageId() },
+  ]);
+  outputPane.textContent = content;
+  editor.colorizeElement(outputPane, { mimeType: 'css', theme });
+}
+
+generateOutput();
+cssModel.onDidChangeContent(generateOutput);
+htmlModel.onDidChangeContent(generateOutput);
+mdxModel.onDidChangeContent(generateOutput);
 
 function updateMarkers(resource: Uri): void {
   const problems = document.getElementById('problems')!;
@@ -239,6 +271,7 @@ tailwindrcModel.onDidChangeContent(() => {
     return;
   }
   monacoTailwindcss.setTailwindConfig(newConfig as TailwindConfig);
+  generateOutput();
 });
 
 editor.onDidChangeMarkers(([resource]) => {
