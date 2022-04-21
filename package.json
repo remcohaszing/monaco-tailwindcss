@@ -1,13 +1,14 @@
 {
   "name": "monaco-tailwindcss",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Tailwindcss integration for Monaco editor",
   "files": [
     "index.js",
     "index.js.map",
     "index.d.ts",
     "tailwindcss.worker.js",
-    "tailwindcss.worker.js.map"
+    "tailwindcss.worker.js.map",
+    "tailwindcss.worker.d.ts"
   ],
   "type": "module",
   "workspaces": [
