@@ -7,7 +7,8 @@
     "index.js.map",
     "index.d.ts",
     "tailwindcss.worker.js",
-    "tailwindcss.worker.js.map"
+    "tailwindcss.worker.js.map",
+    "tailwindcss.worker.d.ts"
   ],
   "type": "module",
   "workspaces": [
