@@ -15,7 +15,8 @@
     "examples/*"
   ],
   "scripts": {
-    "prepack": "node build.js"
+    "prepack": "node build.js",
+    "start": "npm --workspace demo start"
   },
   "repository": {
     "type": "git",
