@@ -42,7 +42,10 @@ export interface MonacoTailwindcss extends IDisposable {
   generateStylesFromContent: (css: string, content: (Content | string)[]) => Promise<string>;
 }
 
-export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): MonacoTailwindcss;
+export function configureMonacoTailwindcss(
+  monaco: typeof import('monaco-editor'),
+  options?: MonacoTailwindcssOptions,
+): MonacoTailwindcss;
 
 /**
  * This data can be used with the default Monaco CSS support to support tailwind directives.
