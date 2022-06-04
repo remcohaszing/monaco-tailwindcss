@@ -11,6 +11,17 @@ function escape(className: string): string {
   return node.value;
 }
 
+function removeBrackets(str: string): string {
+  let result = '';
+  for (let i = 0; i < str.length; i += 1) {
+    const isBracket = (str[i] === '{' || str[i] === '}') && str[i - 1] !== '\\';
+    if (!isBracket) {
+      result += str[i];
+    }
+  }
+  return result;
+}
+
 export function getVariants(jitContext: JitContext): Record<string, string | null> {
   const result: Record<string, string | null> = {};
   for (const [variantName, variantIdsAndFns] of jitContext.variantMap) {
@@ -56,9 +67,9 @@ export function getVariants(jitContext: JitContext): Record<string, string | nul
         decl.remove();
       });
 
-      definition = String(container)
-        .replace(`.${escape(`${variantName}:${placeholder}`)}`, '&')
-        .replace(/(?<!\\)[{}]/g, '')
+      definition = removeBrackets(
+        String(container).replace(`.${escape(`${variantName}:${placeholder}`)}`, '&'),
+      )
         .replace(/\s*\n\s*/g, ' ')
         .trim();
 
