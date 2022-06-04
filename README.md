@@ -7,7 +7,7 @@
 [![netlify Status](https://api.netlify.com/api/v1/badges/d56b5f9b-3adc-4c22-a355-761e72c774ab/deploy-status)](https://app.netlify.com/sites/monaco-tailwindcss/deploys)
 
 [Tailwindcss](https://tailwindcss.com) integration for
-[Monaco editor](https://microsoft.github.io/monaco-editor). (Work in progress)
+[Monaco editor](https://microsoft.github.io/monaco-editor).
 
 ## Installation
 
