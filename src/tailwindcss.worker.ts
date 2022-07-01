@@ -3,6 +3,7 @@ import { TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
 import postcss from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
+import { Config } from 'tailwindcss';
 import {
   AugmentedDiagnostic,
   doComplete,
@@ -17,7 +18,6 @@ import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
 import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { CompletionContext } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
@@ -50,9 +50,7 @@ export interface TailwindcssWorker {
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
 
-async function stateFromConfig(
-  configPromise: PromiseLike<TailwindConfig> | TailwindConfig,
-): Promise<JitState> {
+async function stateFromConfig(configPromise: Config | PromiseLike<Config>): Promise<JitState> {
   const preparedTailwindConfig = await configPromise;
   const config = resolveConfig(preparedTailwindConfig);
   const jitContext = createContext(config);
@@ -77,7 +75,7 @@ async function stateFromConfig(
     jit: true,
     jitContext,
     separator: config.separator,
-    screens: config.theme.screens ? Object.keys(config.theme.screens) : [],
+    screens: config.theme?.screens ? Object.keys(config.theme.screens) : [],
     variants: getVariants(jitContext),
     editor: {
       userLanguages: {},
@@ -117,7 +115,7 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
     const preparedTailwindConfig =
       tailwindWorkerOptions?.prepareTailwindConfig?.(options.tailwindConfig) ??
       options.tailwindConfig ??
-      ({} as TailwindConfig);
+      ({} as Config);
     if (typeof preparedTailwindConfig !== 'object') {
       throw new TypeError(
         `Expected tailwindConfig to resolve to an object, but got: ${JSON.stringify(

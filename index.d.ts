@@ -1,5 +1,5 @@
 import { IDisposable, languages } from 'monaco-editor';
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
+import { Config } from 'tailwindcss';
 
 export interface MonacoTailwindcssOptions {
   /**
@@ -13,7 +13,7 @@ export interface MonacoTailwindcssOptions {
    * This may be either the Tailwind configuration object, or a string that gets processed in the
    * worker.
    */
-  tailwindConfig?: TailwindConfig | string;
+  tailwindConfig?: Config | string;
 }
 
 /**
@@ -32,7 +32,7 @@ export interface MonacoTailwindcss extends IDisposable {
    *
    * @param tailwindConfig - The new Tailwind configuration.
    */
-  setTailwindConfig: (tailwindConfig: TailwindConfig) => void;
+  setTailwindConfig: (tailwindConfig: Config) => void;
 
   /**
    * Generate styles using Tailwindcss.

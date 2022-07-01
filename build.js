@@ -10,7 +10,9 @@ const pkg = JSON.parse(await readFile(new URL('package.json', import.meta.url)))
 await build({
   entryPoints: ['src/index.ts', 'src/tailwindcss.worker.ts'],
   bundle: true,
-  external: Object.keys({ ...pkg.dependencies, ...pkg.peerDependencies }),
+  external: Object.keys({ ...pkg.dependencies, ...pkg.peerDependencies }).filter(
+    (name) => name !== 'tailwindcss',
+  ),
   logLevel,
   outdir: '.',
   sourcemap: true,
