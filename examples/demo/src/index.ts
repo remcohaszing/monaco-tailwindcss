@@ -1,12 +1,12 @@
 import './index.css';
 import { parse } from 'jsonc-parser';
-import { editor, Environment, languages, MarkerSeverity, Uri } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
 import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
 declare global {
   interface Window {
-    MonacoEnvironment: Environment;
+    MonacoEnvironment: monaco.Environment;
   }
 }
 
@@ -40,7 +40,7 @@ const tailwindConfig: TailwindConfig = {
   },
 };
 
-const monacoTailwindcss = configureMonacoTailwindcss({ tailwindConfig });
+const monacoTailwindcss = configureMonacoTailwindcss(monaco, { tailwindConfig });
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
@@ -70,7 +70,7 @@ window.MonacoEnvironment = {
   },
 };
 
-languages.css.cssDefaults.setOptions({
+monaco.languages.css.cssDefaults.setOptions({
   data: {
     dataProviders: {
       tailwind: tailwindcssData,
@@ -78,17 +78,17 @@ languages.css.cssDefaults.setOptions({
   },
 });
 
-languages.json.jsonDefaults.setDiagnosticsOptions({
+monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
   allowComments: true,
   trailingCommas: 'ignore',
 });
 
-const tailwindrcModel = editor.createModel(
+const tailwindrcModel = monaco.editor.createModel(
   `${JSON.stringify(tailwindConfig, undefined, 2)}\n`,
   'json',
-  Uri.parse('file:///.tailwindrc.json'),
+  monaco.Uri.parse('file:///.tailwindrc.json'),
 );
-const cssModel = editor.createModel(
+const cssModel = monaco.editor.createModel(
   `@tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -131,7 +131,7 @@ const cssModel = editor.createModel(
 `,
   'css',
 );
-const htmlModel = editor.createModel(
+const htmlModel = monaco.editor.createModel(
   `<!doctype html>
 <html lang="en">
   <head>
@@ -150,7 +150,7 @@ const htmlModel = editor.createModel(
 `,
   'html',
 );
-const mdxModel = editor.createModel(
+const mdxModel = monaco.editor.createModel(
   `import { MyComponent } from './MyComponent'
 
 # Hello MDX
@@ -164,7 +164,7 @@ const mdxModel = editor.createModel(
   'mdx',
 );
 
-function getModel(): editor.ITextModel {
+function getModel(): monaco.editor.ITextModel {
   switch (window.location.hash) {
     case '#tailwindrc':
       return tailwindrcModel;
@@ -178,14 +178,14 @@ function getModel(): editor.ITextModel {
   }
 }
 
-languages.register({
+monaco.languages.register({
   id: 'mdx',
   extensions: ['.mdx'],
   aliases: ['MDX', 'mdx'],
 });
 
 const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light';
-const ed = editor.create(document.getElementById('editor')!, {
+const ed = monaco.editor.create(document.getElementById('editor')!, {
   automaticLayout: true,
   theme,
   colorDecorators: true,
@@ -213,7 +213,7 @@ async function generateOutput(): Promise<void> {
     { content: mdxModel.getValue(), extension: mdxModel.getLanguageId() },
   ]);
   outputPane.textContent = content;
-  editor.colorizeElement(outputPane, { mimeType: 'css', theme });
+  monaco.editor.colorizeElement(outputPane, { mimeType: 'css', theme });
 }
 
 generateOutput();
@@ -221,14 +221,14 @@ cssModel.onDidChangeContent(generateOutput);
 htmlModel.onDidChangeContent(generateOutput);
 mdxModel.onDidChangeContent(generateOutput);
 
-function updateMarkers(resource: Uri): void {
+function updateMarkers(resource: monaco.Uri): void {
   const problems = document.getElementById('problems')!;
-  const markers = editor.getModelMarkers({ resource });
+  const markers = monaco.editor.getModelMarkers({ resource });
   while (problems.lastChild) {
     problems.lastChild.remove();
   }
   for (const marker of markers) {
-    if (marker.severity === MarkerSeverity.Hint) {
+    if (marker.severity === monaco.MarkerSeverity.Hint) {
       continue;
     }
     const wrapper = document.createElement('div');
@@ -238,7 +238,7 @@ function updateMarkers(resource: Uri): void {
     wrapper.classList.add('problem');
     codicon.classList.add(
       'codicon',
-      marker.severity === MarkerSeverity.Warning ? 'codicon-warning' : 'codicon-error',
+      marker.severity === monaco.MarkerSeverity.Warning ? 'codicon-warning' : 'codicon-error',
     );
     text.classList.add('problem-text');
     text.textContent = marker.message;
@@ -274,7 +274,7 @@ tailwindrcModel.onDidChangeContent(() => {
   generateOutput();
 });
 
-editor.onDidChangeMarkers(([resource]) => {
+monaco.editor.onDidChangeMarkers(([resource]) => {
   if (String(resource) === String(getModel().uri)) {
     updateMarkers(resource);
   }

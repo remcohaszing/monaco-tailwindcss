@@ -1,4 +1,3 @@
-import { editor, languages } from 'monaco-editor/esm/vs/editor/editor.api.js';
 import { registerMarkerDataProvider } from 'monaco-marker-data-provider';
 import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
 import { createWorkerManager } from 'monaco-worker-manager';
@@ -16,27 +15,24 @@ export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typ
 export { tailwindcssData } from './cssData';
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
-  ({ tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {
-    const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>(
-      { editor },
-      {
-        label: 'tailwindcss',
-        moduleId: 'monaco-tailwindcss/tailwindcss.worker',
-        createData: { tailwindConfig },
-      },
-    );
+  (monaco, { tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {
+    const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>(monaco, {
+      label: 'tailwindcss',
+      moduleId: 'monaco-tailwindcss/tailwindcss.worker',
+      createData: { tailwindConfig },
+    });
 
     const disposables = [
       workerManager,
-      languages.registerColorProvider(
+      monaco.languages.registerColorProvider(
         languageSelector,
-        createColorProvider(workerManager.getWorker),
+        createColorProvider(monaco, workerManager.getWorker),
       ),
-      languages.registerCompletionItemProvider(
+      monaco.languages.registerCompletionItemProvider(
         languageSelector,
         createCompletionItemProvider(workerManager.getWorker),
       ),
-      languages.registerHoverProvider(
+      monaco.languages.registerHoverProvider(
         languageSelector,
         createHoverProvider(workerManager.getWorker),
       ),
@@ -50,9 +46,9 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
       if (typeof language === 'string') {
         disposables.push(
           registerMarkerDataProvider(
-            { editor },
+            monaco,
             language,
-            createMarkerDataProvider(workerManager.getWorker),
+            createMarkerDataProvider(monaco, workerManager.getWorker),
           ),
         );
       }

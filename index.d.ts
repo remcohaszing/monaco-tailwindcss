@@ -56,9 +56,13 @@ export interface MonacoTailwindcss extends IDisposable {
 /**
  * Configure `monaco-tailwindcss`.
  *
+ * @param monaco - The `monaco-editor` module.
  * @param options - Options for customizing the `monaco-tailwindcss`.
  */
-export function configureMonacoTailwindcss(options?: MonacoTailwindcssOptions): MonacoTailwindcss;
+export function configureMonacoTailwindcss(
+  monaco: typeof import('monaco-editor'),
+  options?: MonacoTailwindcssOptions,
+): MonacoTailwindcss;
 
 /**
  * This data can be used with the default Monaco CSS support to support tailwind directives.

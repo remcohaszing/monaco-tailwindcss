@@ -1,12 +1,7 @@
 import { fromRatio, names as namedColors } from '@ctrl/tinycolor';
-import {
-  editor,
-  IPosition,
-  IRange,
-  languages,
-  MarkerSeverity,
-  Uri,
-} from 'monaco-editor/esm/vs/editor/editor.api.js';
+// We use a type import here as a safe guard to prevent monaco-editor imports in the output bundle
+// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+import type { editor, IPosition, IRange, languages, MarkerSeverity } from 'monaco-editor';
 import { MarkerDataProvider } from 'monaco-marker-data-provider';
 import { WorkerGetter } from 'monaco-worker-manager';
 import { AugmentedDiagnostic } from 'tailwindcss-language-service';
@@ -337,24 +332,26 @@ function lsDiagnosticSeverityToMonacoModelMarkerSeverity(
 
 function lsDiagnosticRelatedInformationToMonacoRelatedInformation(
   relatedInformation: ls.DiagnosticRelatedInformation,
+  monaco: typeof import('monaco-editor'),
 ): editor.IRelatedInformation {
   return {
     ...lsRangeToMonacoRange(relatedInformation.location.range),
-    resource: Uri.parse(relatedInformation.location.uri),
+    resource: monaco.Uri.parse(relatedInformation.location.uri),
     message: relatedInformation.message,
   };
 }
 
 function augmentedDiagnosticToMonacoModelMarker(
   diagnostic: AugmentedDiagnostic,
+  monaco: typeof import('monaco-editor'),
 ): editor.IMarkerData {
   return {
     ...lsRangeToMonacoRange(diagnostic.range),
     message: diagnostic.message,
     severity: lsDiagnosticSeverityToMonacoModelMarkerSeverity(diagnostic.severity),
     code: diagnostic.code,
-    relatedInformation: diagnostic.relatedInformation?.map(
-      lsDiagnosticRelatedInformationToMonacoRelatedInformation,
+    relatedInformation: diagnostic.relatedInformation?.map((relatedInformation) =>
+      lsDiagnosticRelatedInformationToMonacoRelatedInformation(relatedInformation, monaco),
     ),
   };
 }
@@ -387,10 +384,13 @@ function createColorClass(color: languages.IColor): string {
   return className;
 }
 
-export function createColorProvider(getWorker: WorkerAccessor): languages.DocumentColorProvider {
+export function createColorProvider(
+  monaco: typeof import('monaco-editor'),
+  getWorker: WorkerAccessor,
+): languages.DocumentColorProvider {
   const modelMap = new WeakMap<editor.ITextModel, string[]>();
 
-  editor.onWillDisposeModel((model) => {
+  monaco.editor.onWillDisposeModel((model) => {
     modelMap.delete(model);
   });
 
@@ -515,7 +515,10 @@ export function createCompletionItemProvider(
   };
 }
 
-export function createMarkerDataProvider(getWorker: WorkerAccessor): MarkerDataProvider {
+export function createMarkerDataProvider(
+  monaco: typeof import('monaco-editor'),
+  getWorker: WorkerAccessor,
+): MarkerDataProvider {
   return {
     owner: 'tailwindcss',
     async provideMarkerData(model) {
@@ -523,7 +526,9 @@ export function createMarkerDataProvider(getWorker: WorkerAccessor): MarkerDataP
 
       const diagnostics = await worker.doValidate(String(model.uri), model.getLanguageId());
 
-      return diagnostics.map(augmentedDiagnosticToMonacoModelMarker);
+      return diagnostics.map((diagnostic) =>
+        augmentedDiagnosticToMonacoModelMarker(diagnostic, monaco),
+      );
     },
   };
 }
