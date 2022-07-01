@@ -1,4 +1,4 @@
-import { TailwindConfig } from 'monaco-tailwindcss';
+import { Config } from 'tailwindcss';
 
 export interface TailwindWorkerOptions {
   /**
@@ -7,9 +7,7 @@ export interface TailwindWorkerOptions {
    * @param tailwindConfig - The Tailwind configuration passed from the main thread.
    * @returns A valid Tailwind configuration.
    */
-  prepareTailwindConfig?: (
-    tailwindConfig?: TailwindConfig | string,
-  ) => PromiseLike<TailwindConfig> | TailwindConfig;
+  prepareTailwindConfig?: (tailwindConfig?: Config | string) => Config | PromiseLike<Config>;
 }
 
 /**

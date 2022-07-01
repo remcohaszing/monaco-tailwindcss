@@ -16,8 +16,8 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
-  import { TailwindConfig } from 'monaco-tailwindcss';
   import { Container } from 'postcss';
+  import { Config } from 'tailwindcss';
 
   interface ChangedContent {
     content: string;
@@ -40,26 +40,23 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
   export interface JitContext {
     changedContent: ChangedContent[];
     getClassList: () => string[];
-    tailwindConfig: TailwindConfig;
+    tailwindConfig: Config;
     variantMap: Map<VariantName, VariantFn[]>;
   }
 
-  export function createContext(
-    config: TailwindConfig,
-    changedContent?: ChangedContent[],
-  ): JitContext;
+  export function createContext(config: Config, changedContent?: ChangedContent[]): JitContext;
 }
 
 declare module 'tailwindcss/src/processTailwindFeatures.js' {
-  import { TailwindConfig } from 'monaco-tailwindcss';
   import { AtRule, Plugin, Result, Root } from 'postcss';
+  import { Config } from 'tailwindcss';
   import { ChangedContent, JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 
   type SetupContext = (root: Root, result: Result) => JitContext;
 
   interface ProcessTailwindFeaturesCallbackOptions {
     applyDirectives: Set<AtRule>;
-    createContext: (config: TailwindConfig, changedContent: ChangedContent[]) => JitContext;
+    createContext: (config: Config, changedContent: ChangedContent[]) => JitContext;
     registerDependency: () => unknown;
     tailwindDirectives: Set<string>;
   }
@@ -70,7 +67,7 @@ declare module 'tailwindcss/src/processTailwindFeatures.js' {
 }
 
 declare module 'tailwindcss/src/public/resolve-config.js' {
-  import { TailwindConfig } from 'monaco-tailwindcss';
+  import { Config } from 'tailwindcss';
 
-  export default function resolveConfig(tailwindConfig: TailwindConfig): TailwindConfig;
+  export default function resolveConfig(tailwindConfig: Config): Config;
 }

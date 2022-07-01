@@ -1,7 +1,8 @@
 import './index.css';
 import { parse } from 'jsonc-parser';
 import * as monaco from 'monaco-editor';
-import { configureMonacoTailwindcss, TailwindConfig, tailwindcssData } from 'monaco-tailwindcss';
+import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
+import { Config } from 'tailwindcss';
 
 declare global {
   interface Window {
@@ -9,7 +10,8 @@ declare global {
   }
 }
 
-const tailwindConfig: TailwindConfig = {
+const tailwindConfig: Config = {
+  content: [],
   theme: {
     extend: {
       screens: {
@@ -269,7 +271,7 @@ tailwindrcModel.onDidChangeContent(() => {
   if (newConfig == null) {
     return;
   }
-  monacoTailwindcss.setTailwindConfig(newConfig as TailwindConfig);
+  monacoTailwindcss.setTailwindConfig(newConfig as Config);
   generateOutput();
 });
 
