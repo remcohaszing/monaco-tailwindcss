@@ -16,8 +16,8 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
+  import { TailwindConfig } from 'monaco-tailwindcss';
   import { Container } from 'postcss';
-  import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
   interface ChangedContent {
     content: string;
@@ -51,11 +51,9 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
 }
 
 declare module 'tailwindcss/src/processTailwindFeatures.js' {
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-imports
+  import { TailwindConfig } from 'monaco-tailwindcss';
   import { AtRule, Plugin, Result, Root } from 'postcss';
   import { ChangedContent, JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-imports
-  import { TailwindConfig } from 'tailwindcss/tailwind-config';
 
   type SetupContext = (root: Root, result: Result) => JitContext;
 
@@ -72,5 +70,7 @@ declare module 'tailwindcss/src/processTailwindFeatures.js' {
 }
 
 declare module 'tailwindcss/src/public/resolve-config.js' {
-  export { default } from 'tailwindcss/resolveConfig';
+  import { TailwindConfig } from 'monaco-tailwindcss';
+
+  export default function resolveConfig(tailwindConfig: TailwindConfig): TailwindConfig;
 }

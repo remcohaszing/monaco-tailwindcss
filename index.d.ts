@@ -1,5 +1,7 @@
 import { IDisposable, languages } from 'monaco-editor';
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
+import { Config } from 'tailwindcss';
+
+export type TailwindConfig = Omit<Config, 'content'>;
 
 export interface MonacoTailwindcssOptions {
   /**

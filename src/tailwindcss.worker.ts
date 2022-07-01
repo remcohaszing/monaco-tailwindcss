@@ -1,4 +1,4 @@
-import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
+import { MonacoTailwindcssOptions, TailwindConfig } from 'monaco-tailwindcss';
 import { TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
 import postcss from 'postcss';
@@ -17,7 +17,6 @@ import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
 import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
 import { CompletionContext } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
@@ -77,7 +76,7 @@ async function stateFromConfig(
     jit: true,
     jitContext,
     separator: config.separator,
-    screens: config.theme.screens ? Object.keys(config.theme.screens) : [],
+    screens: config.theme?.screens ? Object.keys(config.theme.screens) : [],
     variants: getVariants(jitContext),
     editor: {
       userLanguages: {},

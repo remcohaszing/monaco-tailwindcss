@@ -1,8 +1,7 @@
 import './index.css';
 import { parse } from 'jsonc-parser';
 import * as monaco from 'monaco-editor';
-import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
+import { configureMonacoTailwindcss, TailwindConfig, tailwindcssData } from 'monaco-tailwindcss';
 
 declare global {
   interface Window {

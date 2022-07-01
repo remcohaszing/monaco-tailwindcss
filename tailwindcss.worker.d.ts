@@ -1,4 +1,4 @@
-import { TailwindConfig } from 'tailwindcss/tailwind-config';
+import { TailwindConfig } from 'monaco-tailwindcss';
 
 export interface TailwindWorkerOptions {
   /**
