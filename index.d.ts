@@ -7,6 +7,12 @@ export interface MonacoTailwindcssOptions {
    */
   languageSelector?: languages.LanguageSelector;
 
+  /**
+   * The tailwind configuration to use.
+   *
+   * This may be either the Tailwind configuration object, or a string that gets processed in the
+   * worker.
+   */
   tailwindConfig?: TailwindConfig | string;
 }
 
@@ -21,6 +27,11 @@ export interface Content {
 }
 
 export interface MonacoTailwindcss extends IDisposable {
+  /**
+   * Update the current Tailwind configuration.
+   *
+   * @param tailwindConfig - The new Tailwind configuration.
+   */
   setTailwindConfig: (tailwindConfig: TailwindConfig) => void;
 
   /**
@@ -42,6 +53,12 @@ export interface MonacoTailwindcss extends IDisposable {
   generateStylesFromContent: (css: string, content: (Content | string)[]) => Promise<string>;
 }
 
+/**
+ * Configure `monaco-tailwindcss`.
+ *
+ * @param monaco - The `monaco-editor` module.
+ * @param options - Options for customizing the `monaco-tailwindcss`.
+ */
 export function configureMonacoTailwindcss(
   monaco: typeof import('monaco-editor'),
   options?: MonacoTailwindcssOptions,

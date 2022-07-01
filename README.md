@@ -7,7 +7,7 @@
 [![netlify Status](https://api.netlify.com/api/v1/badges/d56b5f9b-3adc-4c22-a355-761e72c774ab/deploy-status)](https://app.netlify.com/sites/monaco-tailwindcss/deploys)
 
 [Tailwindcss](https://tailwindcss.com) integration for
-[Monaco editor](https://microsoft.github.io/monaco-editor). (Work in progress)
+[Monaco editor](https://microsoft.github.io/monaco-editor).
 
 ## Installation
 
@@ -26,7 +26,7 @@ import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss'
 languages.css.cssDefaults.setOptions({
   data: {
     dataProviders: {
-      tailwind: tailwindcssData,
+      tailwindcssData,
     },
   },
 });
@@ -86,6 +86,59 @@ window.MonacoEnvironment = {
 };
 ```
 
+## API
+
+This package exposes two exports. One to setup the main logic, another to customize the Tailwind
+configuration in the worker.
+
+### `monaco-tailwindcss`
+
+#### `configureMonacoTailwindcss(options?)`
+
+Configure `monaco-tailwindcss`.
+
+**Arguments**:
+
+- `options`: An object with the following properties:
+  - `languageSelector`: The language ID or IDs to which to apply `monaco-unified`. (`string` |
+    `string[]`, optional, default: `['css', 'javascript', 'html', 'mdx', 'typescript']`)
+  - `tailwindConfig`: The tailwind configuration to use. This may be either the Tailwind
+    configuration object, or a string that gets processed in the worker. (`object` | `string`,
+    optional)
+
+**Returns**: A disposable with the following additional properties:
+
+- `setTailwindConfig(tailwindConfig)`: Update the current Tailwind configuration.
+- `generateStylesFromContent(css, content)`: Generate a CSS string based on the current Tailwind
+  configuration.
+
+#### `tailwindcssData`
+
+This data can be used with the default Monaco CSS support to support tailwind directives. It will
+provider hover information from the Tailwindcss documentation, including a link.
+
+### `monaco-tailwindcss/tailwindcss.worker`
+
+#### `initialize(options)`
+
+Setup the Tailwindcss worker using a customized configuration.
+
+**Arguments**:
+
+- `options`: An object with the following properties:
+  - `prepareTailwindConfig(tailwindConfig)` A functions which accepts the Tailwind configuration
+    passed from the main thread, and returns a valid Tailwind configuration.
+
+## Related projects
+
+- [monaco-unified](https://monaco-unified.js.org)
+- [monaco-yaml](https://monaco-yaml.js.org)
+
+## Showcase
+
+- [Motif](https://motif.land) uses `monaco-tailwindcss` to provide Tailwindcss intellisense in their
+  MDX based content editor.
+
 ## License
 
-[MIT](https://github.com/remcohaszing/monaco-tailwindcss/blob/main/LICENSE.md)
+[MIT](LICENSE.md) @ [Remco Haszing](https://github.com/remcohaszing)
