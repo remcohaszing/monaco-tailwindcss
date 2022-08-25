@@ -29,7 +29,7 @@ import {
 } from 'vscode-languageserver-types';
 
 import { getVariants } from './getVariants.js';
-import { JitState } from './types';
+import { JitState } from './types.js';
 
 export interface TailwindcssWorker {
   doComplete: (

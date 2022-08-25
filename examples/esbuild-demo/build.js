@@ -5,7 +5,7 @@ const esbuild = require('esbuild');
 const outputDir = join(__dirname, 'dist');
 
 /**
- * @param {import ('esbuild').BuildOptions} opts - esbuild options
+ * @param {import ('esbuild').BuildOptions} opts esbuild options
  */
 function build(opts) {
   esbuild.build(opts).then((result) => {
@@ -22,7 +22,7 @@ function build(opts) {
 /**
  * Todo or implement something like https://github.com/evanw/esbuild/issues/802#issuecomment-955776480
  *
- * @param {import ('esbuild').BuildOptions} opts - esbuild options
+ * @param {import ('esbuild').BuildOptions} opts esbuild options
  */
 function serve(opts) {
   esbuild

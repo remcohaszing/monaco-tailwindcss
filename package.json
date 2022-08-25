@@ -65,7 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "esbuild": "^0.14.0",
     "eslint": "^8.0.0",
-    "eslint-config-remcohaszing": "^4.0.0",
+    "eslint-config-remcohaszing": "^6.0.0",
     "prettier": "^2.0.0",
     "tailwindcss-language-service": "0.0.24",
     "vscode-languageserver-protocol": "^3.0.0",
