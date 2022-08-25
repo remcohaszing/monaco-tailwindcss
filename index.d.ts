@@ -32,7 +32,7 @@ export interface MonacoTailwindcss extends IDisposable {
    *
    * @param tailwindConfig - The new Tailwind configuration.
    */
-  setTailwindConfig: (tailwindConfig: Config) => void;
+  setTailwindConfig: (tailwindConfig: Config | string) => void;
 
   /**
    * Generate styles using Tailwindcss.
