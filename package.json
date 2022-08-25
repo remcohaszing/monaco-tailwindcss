@@ -34,6 +34,7 @@
     "url": "https://github.com/remcohaszing/monaco-tailwindcss/issues"
   },
   "homepage": "https://monaco-tailwindcss.js.org",
+  "funding": "https://github.com/sponsors/remcohaszing",
   "dependencies": {
     "@ctrl/tinycolor": "^3.0.0",
     "color-name": "^1.0.0",
