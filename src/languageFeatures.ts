@@ -418,7 +418,11 @@ export function createColorProvider(
           nonEditableColors.map(({ color, range }) => ({
             range,
             options: {
-              beforeContentClassName: `colorpicker-color-decoration ${createColorClass(color)}`,
+              before: {
+                content: '\u00A0',
+                inlineClassName: `${createColorClass(color)} colorpicker-color-decoration`,
+                inlineClassNameAffectsLetterSpacing: true,
+              },
             },
           })),
         ),
