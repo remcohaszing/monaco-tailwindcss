@@ -4,7 +4,7 @@ export interface TailwindWorkerOptions {
   /**
    * Hook that will run before the tailwind config is used.
    *
-   * @param tailwindConfig - The Tailwind configuration passed from the main thread.
+   * @param tailwindConfig The Tailwind configuration passed from the main thread.
    * @returns A valid Tailwind configuration.
    */
   prepareTailwindConfig?: (tailwindConfig?: Config | string) => Config | PromiseLike<Config>;

@@ -7,12 +7,12 @@ import {
   createCompletionItemProvider,
   createHoverProvider,
   createMarkerDataProvider,
-} from './languageFeatures';
-import { TailwindcssWorker } from './tailwindcss.worker';
+} from './languageFeatures.js';
+import { TailwindcssWorker } from './tailwindcss.worker.js';
 
 export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typescript'] as const;
 
-export { tailwindcssData } from './cssData';
+export { tailwindcssData } from './cssData.js';
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
   (monaco, { tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {

@@ -8,7 +8,7 @@ import { AugmentedDiagnostic } from 'tailwindcss-language-service';
 import { CompletionContext, CompletionTriggerKind } from 'vscode-languageserver-protocol';
 import * as ls from 'vscode-languageserver-types';
 
-import { TailwindcssWorker } from './tailwindcss.worker';
+import { TailwindcssWorker } from './tailwindcss.worker.js';
 
 type WorkerAccessor = WorkerGetter<TailwindcssWorker>;
 

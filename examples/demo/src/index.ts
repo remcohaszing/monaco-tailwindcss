@@ -1,14 +1,9 @@
-import './index.css';
 import { parse } from 'jsonc-parser';
 import * as monaco from 'monaco-editor';
 import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
 import { Config } from 'tailwindcss';
 
-declare global {
-  interface Window {
-    MonacoEnvironment: monaco.Environment;
-  }
-}
+import './index.css';
 
 const tailwindConfig: Config = {
   content: [],
