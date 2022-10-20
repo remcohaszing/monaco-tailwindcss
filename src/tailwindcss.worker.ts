@@ -9,6 +9,7 @@ import {
   doComplete,
   doHover,
   doValidate,
+  EditorState,
   getColor,
   getDocumentColors,
   resolveCompletionItem,
@@ -28,7 +29,6 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
-import { getVariants } from './getVariants.js';
 import { JitState } from './types.js';
 
 export interface TailwindcssWorker {
@@ -76,17 +76,24 @@ async function stateFromConfig(configPromise: Config | PromiseLike<Config>): Pro
     jitContext,
     separator: config.separator,
     screens: config.theme?.screens ? Object.keys(config.theme.screens) : [],
-    variants: getVariants(jitContext),
+    variants: jitContext.getVariants(),
     editor: {
       userLanguages: {},
-      // @ts-expect-error this is poorly typed
       // eslint-disable-next-line require-await
       async getConfiguration() {
         return {
           editor: { tabSize: 2 },
+          // Default values are based on
+          // https://github.com/tailwindlabs/tailwindcss-intellisense/blob/v0.9.1/packages/tailwindcss-language-server/src/server.ts#L259-L287
           tailwindCSS: {
+            emmetCompletions: false,
+            classAttributes: ['class', 'className', 'ngClass'],
+            codeActions: true,
+            hovers: true,
+            suggestions: true,
             validate: true,
-            classAttributes: ['class', 'className'],
+            colorDecorators: true,
+            rootFontSize: 16,
             lint: {
               cssConflict: 'warning',
               invalidApply: 'error',
@@ -96,10 +103,22 @@ async function stateFromConfig(configPromise: Config | PromiseLike<Config>): Pro
               invalidTailwindDirective: 'error',
               recommendedVariantOrder: 'warning',
             },
+            showPixelEquivalents: true,
+            includeLanguages: {},
+            files: {
+              // Upstream defines these values, but we don’t need them..
+              exclude: [],
+            },
+            experimental: {
+              classRegex: [],
+              // Upstream types are wrong
+              configFile: {},
+            },
           },
         };
       },
-    },
+      // This option takes some properties that we don’t have nor need.
+    } as Partial<EditorState> as EditorState,
   };
 
   state.classList = jitContext

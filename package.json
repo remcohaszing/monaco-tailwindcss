@@ -37,6 +37,7 @@
   "funding": "https://github.com/sponsors/remcohaszing",
   "dependencies": {
     "@ctrl/tinycolor": "^3.0.0",
+    "becke-ch--regex--s0-0-v1--base--pl--lib": "^1.0.0",
     "color-name": "^1.0.0",
     "css.escape": "^1.0.0",
     "dlv": "^1.0.0",
@@ -45,10 +46,9 @@
     "monaco-marker-data-provider": "^1.0.0",
     "monaco-worker-manager": "^2.0.0",
     "moo": "^0.5.0",
-    "multi-regexp2": "^1.0.0",
     "postcss": "^8.0.0",
     "postcss-js": "^4.0.0",
-    "postcss-nested": "^5.0.0",
+    "postcss-nested": "^6.0.0",
     "postcss-selector-parser": "^6.0.0",
     "postcss-value-parser": "^4.0.0",
     "quick-lru": "^5.0.0",
@@ -64,11 +64,11 @@
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "esbuild": "^0.14.0",
+    "esbuild": "^0.15.0",
     "eslint": "^8.0.0",
     "eslint-config-remcohaszing": "^6.0.0",
     "prettier": "^2.0.0",
-    "tailwindcss-language-service": "0.0.24",
+    "tailwindcss-language-service": "0.0.25",
     "vscode-languageserver-protocol": "^3.0.0",
     "vscode-languageserver-types": "^3.0.0"
   },

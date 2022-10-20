@@ -9,6 +9,6 @@
   "dependencies": {
     "monaco-editor": "^0.34.0",
     "monaco-tailwindcss": "file:../..",
-    "esbuild": "^0.14.0"
+    "esbuild": "^0.15.0"
   }
 }
