@@ -20,10 +20,10 @@ npm install monaco-tailwindcss
 Import `monaco-tailwindcss` and configure it before an editor instance is created.
 
 ```typescript
-import { editor, languages } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
 
-languages.css.cssDefaults.setOptions({
+monaco.languages.css.cssDefaults.setOptions({
   data: {
     dataProviders: {
       tailwindcssData,
@@ -31,9 +31,9 @@ languages.css.cssDefaults.setOptions({
   },
 });
 
-configureMonacoTailwindcss();
+configureMonacoTailwindcss(monaco);
 
-editor.create(document.createElement('editor'), {
+monaco.editor.create(document.createElement('editor'), {
   language: 'html',
   value: `<!doctype html>
 <html lang="en">
@@ -93,12 +93,13 @@ configuration in the worker.
 
 ### `monaco-tailwindcss`
 
-#### `configureMonacoTailwindcss(options?)`
+#### `configureMonacoTailwindcss(monaco, options?)`
 
 Configure `monaco-tailwindcss`.
 
 **Arguments**:
 
+- `monaco`: The `monaco-editor` module. (`object`)
 - `options`: An object with the following properties:
   - `languageSelector`: The language ID or IDs to which to apply `monaco-unified`. (`string` |
     `string[]`, optional, default: `['css', 'javascript', 'html', 'mdx', 'typescript']`)
