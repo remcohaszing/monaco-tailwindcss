@@ -106,7 +106,7 @@ async function stateFromConfig(configPromise: Config | PromiseLike<Config>): Pro
             showPixelEquivalents: true,
             includeLanguages: {},
             files: {
-              // Upstream defines these values, but we don’t need them..
+              // Upstream defines these values, but we don’t need them.
               exclude: [],
             },
             experimental: {
