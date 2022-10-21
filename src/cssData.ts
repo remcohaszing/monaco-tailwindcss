@@ -159,7 +159,28 @@ Note that if you're using Sass/SCSS, you'll need to use Sass' interpolation feat
 \`\`\``,
 );
 
+const configDirective = createTailwindDirective(
+  'config',
+  `Use the \`@config\` directive to specify which config file Tailwind should use when compiling CSS file. This is useful for projects that need to use different configuration files for different CSS entry points.
+
+\`\`\`css
+@config "./tailwind.site.config.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+\`\`\`
+
+\`\`\`css
+@config "./tailwind.admin.config.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+\`\`\`
+
+The path you provide to the \`@config\` directive is relative to that CSS file, and will take precedence over a path defined in your PostCSS configuration or in the Tailwind CLI.`,
+);
+
 export const tailwindcssData: languages.css.CSSDataV1 = {
   version: 1.1,
-  atDirectives: [tailwindDirective, layerDirective, applyDirective],
+  atDirectives: [tailwindDirective, layerDirective, applyDirective, configDirective],
 };
