@@ -1,12 +1,10 @@
 import { parse } from 'jsonc-parser';
 import * as monaco from 'monaco-editor';
-import { configureMonacoTailwindcss, tailwindcssData } from 'monaco-tailwindcss';
-import { Config } from 'tailwindcss';
+import { configureMonacoTailwindcss, TailwindConfig, tailwindcssData } from 'monaco-tailwindcss';
 
 import './index.css';
 
-const tailwindConfig: Config = {
-  content: [],
+const tailwindConfig: TailwindConfig = {
   theme: {
     extend: {
       screens: {
@@ -266,7 +264,7 @@ tailwindrcModel.onDidChangeContent(() => {
   if (newConfig == null) {
     return;
   }
-  monacoTailwindcss.setTailwindConfig(newConfig as Config);
+  monacoTailwindcss.setTailwindConfig(newConfig as TailwindConfig);
   generateOutput();
 });
 
