@@ -1,3 +1,4 @@
+import { setMonaco } from 'monaco-languageserver-types';
 import { registerMarkerDataProvider } from 'monaco-marker-data-provider';
 import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
 import { createWorkerManager } from 'monaco-worker-manager';
@@ -16,6 +17,8 @@ export { tailwindcssData } from './cssData.js';
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
   (monaco, { tailwindConfig, languageSelector = defaultLanguageSelector } = {}) => {
+    setMonaco(monaco);
+
     const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>(monaco, {
       label: 'tailwindcss',
       moduleId: 'monaco-tailwindcss/tailwindcss.worker',
@@ -48,7 +51,7 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
           registerMarkerDataProvider(
             monaco,
             language,
-            createMarkerDataProvider(monaco, workerManager.getWorker),
+            createMarkerDataProvider(workerManager.getWorker),
           ),
         );
       }
