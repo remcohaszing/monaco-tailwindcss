@@ -35,7 +35,6 @@ await build({
           .map((file) => parse(file.name).name);
         onResolve({ filter: new RegExp(`^(${stubNames.join('|')})$`) }, ({ path }) => ({
           path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
-          sideEffects: false,
         }));
 
         // The tailwindcss main export exports CJS, but we can get better tree shaking if we import
@@ -58,12 +57,10 @@ await build({
           if (options.importer.includes(`${sep}tailwindcss${sep}`)) {
             return {
               path: fileURLToPath(new URL('src/stubs/tailwindcss/utils/log.ts', import.meta.url)),
-              sideEffects: false,
             };
           }
           return resolve(path, {
             ...options,
-            sideEffects: false,
             namespace: 'noRecurse',
           });
         });
@@ -80,10 +77,6 @@ await build({
           { filter: /^(postcss-selector-parser|semver)\/.*\/\w+$/ },
           ({ path, ...options }) => resolve(`${path}.js`, options),
         );
-
-        // None of our dependencies use side effects, but many packages don’t explicitly define
-        // this.
-        onResolve({ filter: /.*/ }, () => ({ sideEffects: false }));
 
         // Rewrite the tailwind stubs from CJS to ESM, so our bundle doesn’t need to include any CJS
         // related logic.
