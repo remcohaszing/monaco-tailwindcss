@@ -18,6 +18,20 @@
     "prepack": "node build.js",
     "start": "npm --workspace demo start"
   },
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "default": "./index.js"
+    },
+    "./tailwindcss.worker": {
+      "types": "./tailwindcss.worker.d.ts",
+      "default": "./tailwindcss.worker.js"
+    },
+    "./tailwindcss.worker.js": {
+      "types": "./tailwindcss.worker.d.ts",
+      "default": "./tailwindcss.worker.js"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/remcohaszing/monaco-tailwindcss.git"
