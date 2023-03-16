@@ -1,7 +1,7 @@
 import { MonacoTailwindcssOptions, TailwindConfig } from 'monaco-tailwindcss';
 import { TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
-import postcss from 'postcss';
+import postcss, { Processor } from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
 import { Config } from 'tailwindcss';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
@@ -62,7 +62,11 @@ async function stateFromConfig(
     config,
     enabled: true,
     modules: {
-      postcss: { module: postcss, version: '' },
+      postcss: {
+        // @ts-expect-error https://github.com/postcss/postcss/pull/1815
+        module: postcss,
+        version: '',
+      },
       postcssSelectorParser: { module: postcssSelectorParser },
       jit: {
         createContext: { module: createContext },
@@ -192,7 +196,9 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
         const tailwind = processTailwindFeatures(
           (processOptions) => () => processOptions.createContext(config, content),
         );
-        const processor = postcss([tailwind]);
+
+        // @ts-expect-error https://github.com/postcss/postcss/pull/1815
+        const processor = postcss([tailwind]) as Processor;
 
         const result = await processor.process(css);
         return result.css;
