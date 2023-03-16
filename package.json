@@ -32,10 +32,7 @@
       "default": "./tailwindcss.worker.js"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/remcohaszing/monaco-tailwindcss.git"
-  },
+  "repository": "remcohaszing/monaco-tailwindcss",
   "keywords": [
     "monaco",
     "monaco-editor",
@@ -44,9 +41,7 @@
   ],
   "author": "Remco Haszing <remcohaszing@gmail.com>",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/remcohaszing/monaco-tailwindcss/issues"
-  },
+  "bugs": "https://github.com/remcohaszing/monaco-tailwindcss/issues",
   "homepage": "https://monaco-tailwindcss.js.org",
   "funding": "https://github.com/sponsors/remcohaszing",
   "dependencies": {
