@@ -4,6 +4,11 @@ import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
 import postcss from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
 import { Config } from 'tailwindcss';
+import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
+import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
+import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
+import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
 import {
   AugmentedDiagnostic,
   doComplete,
@@ -14,11 +19,6 @@ import {
   getDocumentColors,
   resolveCompletionItem,
 } from 'tailwindcss-language-service';
-import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
-import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
-import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
-import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
-import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
 import { CompletionContext } from 'vscode-languageserver-protocol';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
