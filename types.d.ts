@@ -50,7 +50,8 @@ declare module 'tailwindcss/src/processTailwindFeatures.js' {
 }
 
 declare module 'tailwindcss/src/public/resolve-config.js' {
+  import { TailwindConfig } from 'monaco-tailwindcss';
   import { Config } from 'tailwindcss';
 
-  export default function resolveConfig(tailwindConfig: Config): Config;
+  export default function resolveConfig(tailwindConfig: TailwindConfig): Config;
 }

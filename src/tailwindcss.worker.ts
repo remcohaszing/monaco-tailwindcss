@@ -1,4 +1,4 @@
-import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
+import { MonacoTailwindcssOptions, TailwindConfig } from 'monaco-tailwindcss';
 import { TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
 import postcss from 'postcss';
@@ -50,7 +50,9 @@ export interface TailwindcssWorker {
   resolveCompletionItem: (item: CompletionItem) => CompletionItem;
 }
 
-async function stateFromConfig(configPromise: Config | PromiseLike<Config>): Promise<JitState> {
+async function stateFromConfig(
+  configPromise: PromiseLike<TailwindConfig> | TailwindConfig,
+): Promise<JitState> {
   const preparedTailwindConfig = await configPromise;
   const config = resolveConfig(preparedTailwindConfig);
   const jitContext = createContext(config);
