@@ -213,6 +213,7 @@ async function generateOutput(): Promise<void> {
   monaco.editor.colorizeElement(outputPane, { mimeType: 'css', theme });
 }
 
+// eslint-disable-next-line unicorn/prefer-top-level-await
 generateOutput();
 cssModel.onDidChangeContent(generateOutput);
 htmlModel.onDidChangeContent(generateOutput);

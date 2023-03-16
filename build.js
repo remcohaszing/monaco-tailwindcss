@@ -1,6 +1,6 @@
-import { readdir, readFile } from 'fs/promises';
-import { parse, sep } from 'path';
-import { fileURLToPath } from 'url';
+import { readdir, readFile } from 'node:fs/promises';
+import { parse, sep } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 import { build } from 'esbuild';
 
