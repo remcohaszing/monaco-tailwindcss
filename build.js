@@ -33,6 +33,7 @@ await build({
         const stubNames = stubFiles
           .filter((file) => file.isFile())
           .map((file) => parse(file.name).name);
+
         onResolve({ filter: new RegExp(`^(${stubNames.join('|')})$`) }, ({ path }) => ({
           path: fileURLToPath(new URL(`src/stubs/${path}.ts`, import.meta.url)),
         }));
@@ -42,6 +43,7 @@ await build({
         onResolve({ filter: /^tailwindcss$/ }, ({ path, ...options }) =>
           resolve('tailwindcss/src', options),
         );
+
         onResolve({ filter: /^tailwindcss\/lib/ }, ({ path, ...options }) =>
           resolve(path.replace('lib', 'src'), options),
         );
@@ -80,11 +82,14 @@ await build({
 
         // Rewrite the tailwind stubs from CJS to ESM, so our bundle doesn’t need to include any CJS
         // related logic.
-        onLoad({ filter: /\/tailwindcss\/stubs\/defaultConfig\.stub\.js$/ }, async ({ path }) => {
-          const cjs = await readFile(path, 'utf8');
-          const esm = cjs.replace('module.exports =', 'export default');
-          return { contents: esm };
-        });
+        onLoad(
+          { filter: /\/node_modules\/tailwindcss\/stubs\/defaultConfig\.stub\.js$/ },
+          async ({ path }) => {
+            const cjs = await readFile(path, 'utf8');
+            const esm = cjs.replace('module.exports =', 'export default');
+            return { contents: esm };
+          },
+        );
       },
     },
   ],
