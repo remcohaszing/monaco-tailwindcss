@@ -64,10 +64,9 @@
     "monaco-editor": ">=0.36"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.0.0",
-    "esbuild": "^0.15.0",
+    "esbuild": "^0.17.0",
     "eslint": "^8.0.0",
-    "eslint-config-remcohaszing": "^6.0.0",
+    "eslint-config-remcohaszing": "^8.0.0",
     "prettier": "^2.0.0",
     "tailwindcss-language-service": "0.0.25",
     "vscode-languageserver-protocol": "^3.0.0",
