@@ -3,10 +3,6 @@ declare module '*.css' {
   export default css;
 }
 
-declare module 'culori' {
-  export type Color = unknown;
-}
-
 declare module 'tailwindcss/src/lib/expandApplyAtRules.js' {
   export default function expandApplyAtRules(): void;
 }

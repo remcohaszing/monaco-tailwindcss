@@ -64,6 +64,7 @@
     "monaco-editor": ">=0.36"
   },
   "devDependencies": {
+    "@types/culori": "^2.0.0",
     "esbuild": "^0.17.0",
     "eslint": "^8.0.0",
     "eslint-config-remcohaszing": "^8.0.0",
