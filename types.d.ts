@@ -32,14 +32,13 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
 
 declare module 'tailwindcss/src/processTailwindFeatures.js' {
   import { AtRule, Plugin, Result, Root } from 'postcss';
-  import { Config } from 'tailwindcss';
-  import { ChangedContent, JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+  import { createContext, JitContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 
   type SetupContext = (root: Root, result: Result) => JitContext;
 
   interface ProcessTailwindFeaturesCallbackOptions {
     applyDirectives: Set<AtRule>;
-    createContext: (config: Config, changedContent: ChangedContent[]) => JitContext;
+    createContext: typeof createContext;
     registerDependency: () => unknown;
     tailwindDirectives: Set<string>;
   }
