@@ -1,7 +1,7 @@
 import * as monaco from 'monaco-editor';
 import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
 
-configureMonacoTailwindcss();
+configureMonacoTailwindcss(monaco);
 
 // Required Js to initiate the workers created above.
 window.MonacoEnvironment = {

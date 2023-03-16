@@ -1,4 +1,4 @@
-import { editor } from 'monaco-editor';
+import * as monaco from 'monaco-editor';
 import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker';
 import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
 import TailwindcssWorker from 'monaco-tailwindcss/tailwindcss.worker.js?worker';
@@ -16,9 +16,9 @@ window.MonacoEnvironment = {
   },
 };
 
-configureMonacoTailwindcss({});
+configureMonacoTailwindcss(monaco, {});
 
-editor.create(document.getElementById('editor'), {
+monaco.editor.create(document.getElementById('editor'), {
   automaticLayout: true,
   language: 'html',
   value: `<!doctype html>
