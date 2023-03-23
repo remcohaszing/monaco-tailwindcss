@@ -85,6 +85,11 @@ async function stateFromConfig(
     variants: jitContext.getVariants(),
     editor: {
       userLanguages: {},
+      capabilities: {
+        configuration: true,
+        diagnosticRelatedInformation: true,
+        itemDefaults: [],
+      },
       // eslint-disable-next-line require-await
       async getConfiguration() {
         return {
