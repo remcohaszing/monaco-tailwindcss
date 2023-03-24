@@ -1,4 +1,4 @@
-import { languages } from 'monaco-editor';
+import { languages } from 'monaco-types';
 
 function createTailwindDirective(name: string, value: string): languages.css.IAtDirectiveData {
   return {

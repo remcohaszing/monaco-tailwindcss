@@ -1,7 +1,4 @@
 import { fromRatio, names as namedColors } from '@ctrl/tinycolor';
-// We use a type import here as a safe guard to prevent monaco-editor imports in the output bundle
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
-import type { editor, languages } from 'monaco-editor';
 import {
   fromCompletionContext,
   fromCompletionItem,
@@ -13,6 +10,7 @@ import {
   toMarkerData,
 } from 'monaco-languageserver-types';
 import { MarkerDataProvider } from 'monaco-marker-data-provider';
+import { editor, languages, MonacoEditor } from 'monaco-types';
 import { WorkerGetter } from 'monaco-worker-manager';
 
 import { TailwindcssWorker } from './tailwindcss.worker.js';
@@ -48,7 +46,7 @@ function createColorClass(color: languages.IColor): string {
 }
 
 export function createColorProvider(
-  monaco: typeof import('monaco-editor'),
+  monaco: MonacoEditor,
   getWorker: WorkerAccessor,
 ): languages.DocumentColorProvider {
   const modelMap = new WeakMap<editor.ITextModel, string[]>();

@@ -1,4 +1,4 @@
-import { IDisposable, languages } from 'monaco-editor';
+import { IDisposable, languages, MonacoEditor } from 'monaco-types';
 import { Config } from 'tailwindcss';
 
 /**
@@ -65,7 +65,7 @@ export interface MonacoTailwindcss extends IDisposable {
  * @param options Options for customizing the `monaco-tailwindcss`.
  */
 export function configureMonacoTailwindcss(
-  monaco: typeof import('monaco-editor'),
+  monaco: MonacoEditor,
   options?: MonacoTailwindcssOptions,
 ): MonacoTailwindcss;
 
