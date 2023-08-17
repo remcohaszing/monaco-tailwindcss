@@ -1,4 +1,4 @@
-import { fromRatio, names as namedColors } from '@ctrl/tinycolor';
+import { fromRatio, names as namedColors } from '@ctrl/tinycolor'
 import {
   fromCompletionContext,
   fromCompletionItem,
@@ -7,68 +7,68 @@ import {
   toCompletionItem,
   toCompletionList,
   toHover,
-  toMarkerData,
-} from 'monaco-languageserver-types';
-import { type MarkerDataProvider } from 'monaco-marker-data-provider';
-import { type editor, type languages, type MonacoEditor } from 'monaco-types';
-import { type WorkerGetter } from 'monaco-worker-manager';
+  toMarkerData
+} from 'monaco-languageserver-types'
+import { type MarkerDataProvider } from 'monaco-marker-data-provider'
+import { type editor, type languages, type MonacoEditor } from 'monaco-types'
+import { type WorkerGetter } from 'monaco-worker-manager'
 
-import { type TailwindcssWorker } from './tailwindcss.worker.js';
+import { type TailwindcssWorker } from './tailwindcss.worker.js'
 
-type WorkerAccessor = WorkerGetter<TailwindcssWorker>;
+type WorkerAccessor = WorkerGetter<TailwindcssWorker>
 
-const colorNames = Object.values(namedColors);
+const colorNames = Object.values(namedColors)
 const editableColorRegex = new RegExp(
-  `-\\[(${colorNames.join('|')}|((?:#|rgba?\\(|hsla?\\())[^\\]]+)\\]$`,
-);
-const stylesheet = document.createElement('style');
-document.head.append(stylesheet);
+  `-\\[(${colorNames.join('|')}|((?:#|rgba?\\(|hsla?\\())[^\\]]+)\\]$`
+)
+const stylesheet = document.createElement('style')
+document.head.append(stylesheet)
 
 function colorValueToHex(value: number): string {
   return Math.round(value * 255)
     .toString(16)
-    .padStart(2, '0');
+    .padStart(2, '0')
 }
 
 function createColorClass(color: languages.IColor): string {
   const hex = `${colorValueToHex(color.red)}${colorValueToHex(color.green)}${colorValueToHex(
-    color.blue,
-  )}`;
-  const className = `tailwindcss-color-decoration-${hex}`;
-  const selector = `.${className}`;
+    color.blue
+  )}`
+  const className = `tailwindcss-color-decoration-${hex}`
+  const selector = `.${className}`
   for (const rule of stylesheet.sheet!.cssRules) {
     if ((rule as CSSStyleRule).selectorText === selector) {
-      return className;
+      return className
     }
   }
-  stylesheet.sheet!.insertRule(`${selector}{background-color:#${hex}}`);
-  return className;
+  stylesheet.sheet!.insertRule(`${selector}{background-color:#${hex}}`)
+  return className
 }
 
 export function createColorProvider(
   monaco: MonacoEditor,
-  getWorker: WorkerAccessor,
+  getWorker: WorkerAccessor
 ): languages.DocumentColorProvider {
-  const modelMap = new WeakMap<editor.ITextModel, string[]>();
+  const modelMap = new WeakMap<editor.ITextModel, string[]>()
 
   monaco.editor.onWillDisposeModel((model) => {
-    modelMap.delete(model);
-  });
+    modelMap.delete(model)
+  })
 
   return {
     async provideDocumentColors(model) {
-      const worker = await getWorker(model.uri);
+      const worker = await getWorker(model.uri)
 
-      const editableColors: languages.IColorInformation[] = [];
-      const nonEditableColors: languages.IColorInformation[] = [];
-      const colors = await worker.getDocumentColors(String(model.uri), model.getLanguageId());
+      const editableColors: languages.IColorInformation[] = []
+      const nonEditableColors: languages.IColorInformation[] = []
+      const colors = await worker.getDocumentColors(String(model.uri), model.getLanguageId())
       for (const lsColor of colors) {
-        const monacoColor = toColorInformation(lsColor);
-        const text = model.getValueInRange(monacoColor.range);
+        const monacoColor = toColorInformation(lsColor)
+        const text = model.getValueInRange(monacoColor.range)
         if (editableColorRegex.test(text)) {
-          editableColors.push(monacoColor);
+          editableColors.push(monacoColor)
         } else {
-          nonEditableColors.push(monacoColor);
+          nonEditableColors.push(monacoColor)
         }
       }
 
@@ -82,124 +82,124 @@ export function createColorProvider(
               before: {
                 content: '\u00A0',
                 inlineClassName: `${createColorClass(color)} colorpicker-color-decoration`,
-                inlineClassNameAffectsLetterSpacing: true,
-              },
-            },
-          })),
-        ),
-      );
+                inlineClassNameAffectsLetterSpacing: true
+              }
+            }
+          }))
+        )
+      )
 
-      return editableColors;
+      return editableColors
     },
 
     provideColorPresentations(model, colorInformation) {
-      const className = model.getValueInRange(colorInformation.range);
+      const className = model.getValueInRange(colorInformation.range)
       const match = new RegExp(
         `-\\[(${colorNames.join('|')}|(?:(?:#|rgba?\\(|hsla?\\())[^\\]]+)\\]$`,
-        'i',
-      ).exec(className);
+        'i'
+      ).exec(className)
 
       if (!match) {
-        return [];
+        return []
       }
 
-      const [currentColor] = match;
+      const [currentColor] = match
 
-      const isNamedColor = colorNames.includes(currentColor);
+      const isNamedColor = colorNames.includes(currentColor)
       const color = fromRatio({
         r: colorInformation.color.red,
         g: colorInformation.color.green,
         b: colorInformation.color.blue,
-        a: colorInformation.color.alpha,
-      });
+        a: colorInformation.color.alpha
+      })
 
       let hexValue = color.toHex8String(
-        !isNamedColor && (currentColor.length === 4 || currentColor.length === 5),
-      );
+        !isNamedColor && (currentColor.length === 4 || currentColor.length === 5)
+      )
       if (hexValue.length === 5) {
-        hexValue = hexValue.replace(/f$/, '');
+        hexValue = hexValue.replace(/f$/, '')
       } else if (hexValue.length === 9) {
-        hexValue = hexValue.replace(/ff$/, '');
+        hexValue = hexValue.replace(/ff$/, '')
       }
 
-      const rgbValue = color.toRgbString().replaceAll(' ', '');
-      const hslValue = color.toHslString().replaceAll(' ', '');
-      const prefix = className.slice(0, Math.max(0, match.index));
+      const rgbValue = color.toRgbString().replaceAll(' ', '')
+      const hslValue = color.toHslString().replaceAll(' ', '')
+      const prefix = className.slice(0, Math.max(0, match.index))
 
       return [
         { label: `${prefix}-[${hexValue}]` },
         { label: `${prefix}-[${rgbValue}]` },
-        { label: `${prefix}-[${hslValue}]` },
-      ];
-    },
-  };
+        { label: `${prefix}-[${hslValue}]` }
+      ]
+    }
+  }
 }
 
 export function createHoverProvider(getWorker: WorkerAccessor): languages.HoverProvider {
   return {
     async provideHover(model, position) {
-      const worker = await getWorker(model.uri);
+      const worker = await getWorker(model.uri)
 
       const hover = await worker.doHover(
         String(model.uri),
         model.getLanguageId(),
-        fromPosition(position),
-      );
+        fromPosition(position)
+      )
 
-      return hover && toHover(hover);
-    },
-  };
+      return hover && toHover(hover)
+    }
+  }
 }
 
 export function createCompletionItemProvider(
-  getWorker: WorkerAccessor,
+  getWorker: WorkerAccessor
 ): languages.CompletionItemProvider {
   return {
     async provideCompletionItems(model, position, context) {
-      const worker = await getWorker(model.uri);
+      const worker = await getWorker(model.uri)
 
       const completionList = await worker.doComplete(
         String(model.uri),
         model.getLanguageId(),
         fromPosition(position),
-        fromCompletionContext(context),
-      );
+        fromCompletionContext(context)
+      )
 
       if (!completionList) {
-        return;
+        return
       }
 
-      const wordInfo = model.getWordUntilPosition(position);
+      const wordInfo = model.getWordUntilPosition(position)
 
       return toCompletionList(completionList, {
         range: {
           startLineNumber: position.lineNumber,
           startColumn: wordInfo.startColumn,
           endLineNumber: position.lineNumber,
-          endColumn: wordInfo.endColumn,
-        },
-      });
+          endColumn: wordInfo.endColumn
+        }
+      })
     },
 
     async resolveCompletionItem(item) {
-      const worker = await getWorker();
+      const worker = await getWorker()
 
-      const result = await worker.resolveCompletionItem(fromCompletionItem(item));
+      const result = await worker.resolveCompletionItem(fromCompletionItem(item))
 
-      return toCompletionItem(result, { range: item.range });
-    },
-  };
+      return toCompletionItem(result, { range: item.range })
+    }
+  }
 }
 
 export function createMarkerDataProvider(getWorker: WorkerAccessor): MarkerDataProvider {
   return {
     owner: 'tailwindcss',
     async provideMarkerData(model) {
-      const worker = await getWorker(model.uri);
+      const worker = await getWorker(model.uri)
 
-      const diagnostics = await worker.doValidate(String(model.uri), model.getLanguageId());
+      const diagnostics = await worker.doValidate(String(model.uri), model.getLanguageId())
 
-      return diagnostics.map((diagnostic) => toMarkerData(diagnostic));
-    },
-  };
+      return diagnostics.map((diagnostic) => toMarkerData(diagnostic))
+    }
+  }
 }

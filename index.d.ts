@@ -1,16 +1,16 @@
-import { type IDisposable, type languages, type MonacoEditor } from 'monaco-types';
-import { type Config } from 'tailwindcss';
+import { type IDisposable, type languages, type MonacoEditor } from 'monaco-types'
+import { type Config } from 'tailwindcss'
 
 /**
  * A Tailwind configuration, but without content.
  */
-export type TailwindConfig = Omit<Config, 'content'>;
+export type TailwindConfig = Omit<Config, 'content'>
 
 export interface MonacoTailwindcssOptions {
   /**
    * @default defaultLanguageSelector
    */
-  languageSelector?: languages.LanguageSelector;
+  languageSelector?: languages.LanguageSelector
 
   /**
    * The tailwind configuration to use.
@@ -18,7 +18,7 @@ export interface MonacoTailwindcssOptions {
    * This may be either the Tailwind configuration object, or a string that gets processed in the
    * worker.
    */
-  tailwindConfig?: TailwindConfig | string;
+  tailwindConfig?: TailwindConfig | string
 }
 
 /**
@@ -27,8 +27,8 @@ export interface MonacoTailwindcssOptions {
  * to properly extract css classed based on the content language.
  */
 export interface Content {
-  content: string;
-  extension?: string;
+  content: string
+  extension?: string
 }
 
 export interface MonacoTailwindcss extends IDisposable {
@@ -38,7 +38,7 @@ export interface MonacoTailwindcss extends IDisposable {
    * @param tailwindConfig
    *   The new Tailwind configuration.
    */
-  setTailwindConfig: (tailwindConfig: TailwindConfig | string) => void;
+  setTailwindConfig: (tailwindConfig: TailwindConfig | string) => void
 
   /**
    * Generate styles using Tailwindcss.
@@ -58,7 +58,7 @@ export interface MonacoTailwindcss extends IDisposable {
    *   editor.getModels().filter((model) => model.getLanguageId() === 'html')
    * )
    */
-  generateStylesFromContent: (css: string, content: (Content | string)[]) => Promise<string>;
+  generateStylesFromContent: (css: string, content: (Content | string)[]) => Promise<string>
 }
 
 /**
@@ -71,12 +71,12 @@ export interface MonacoTailwindcss extends IDisposable {
  */
 export function configureMonacoTailwindcss(
   monaco: MonacoEditor,
-  options?: MonacoTailwindcssOptions,
-): MonacoTailwindcss;
+  options?: MonacoTailwindcssOptions
+): MonacoTailwindcss
 
 /**
  * This data can be used with the default Monaco CSS support to support tailwind directives.
  *
  * It will provider hover information from the Tailwindcss documentation, including a link.
  */
-export const tailwindcssData: languages.css.CSSDataV1;
+export const tailwindcssData: languages.css.CSSDataV1

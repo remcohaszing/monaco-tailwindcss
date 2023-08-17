@@ -1,45 +1,45 @@
-import { setMonaco } from 'monaco-languageserver-types';
-import { registerMarkerDataProvider } from 'monaco-marker-data-provider';
-import { type MonacoTailwindcssOptions } from 'monaco-tailwindcss';
-import { createWorkerManager } from 'monaco-worker-manager';
+import { setMonaco } from 'monaco-languageserver-types'
+import { registerMarkerDataProvider } from 'monaco-marker-data-provider'
+import { type MonacoTailwindcssOptions } from 'monaco-tailwindcss'
+import { createWorkerManager } from 'monaco-worker-manager'
 
 import {
   createColorProvider,
   createCompletionItemProvider,
   createHoverProvider,
-  createMarkerDataProvider,
-} from './languageFeatures.js';
-import { type TailwindcssWorker } from './tailwindcss.worker.js';
+  createMarkerDataProvider
+} from './languageFeatures.js'
+import { type TailwindcssWorker } from './tailwindcss.worker.js'
 
-export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typescript'] as const;
+export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typescript'] as const
 
-export { tailwindcssData } from './cssData.js';
+export { tailwindcssData } from './cssData.js'
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
   (monaco, { languageSelector = defaultLanguageSelector, tailwindConfig } = {}) => {
-    setMonaco(monaco);
+    setMonaco(monaco)
 
     const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>(monaco, {
       label: 'tailwindcss',
       moduleId: 'monaco-tailwindcss/tailwindcss.worker',
-      createData: { tailwindConfig },
-    });
+      createData: { tailwindConfig }
+    })
 
     const disposables = [
       workerManager,
       monaco.languages.registerColorProvider(
         languageSelector,
-        createColorProvider(monaco, workerManager.getWorker),
+        createColorProvider(monaco, workerManager.getWorker)
       ),
       monaco.languages.registerCompletionItemProvider(
         languageSelector,
-        createCompletionItemProvider(workerManager.getWorker),
+        createCompletionItemProvider(workerManager.getWorker)
       ),
       monaco.languages.registerHoverProvider(
         languageSelector,
-        createHoverProvider(workerManager.getWorker),
-      ),
-    ];
+        createHoverProvider(workerManager.getWorker)
+      )
+    ]
 
     // Monaco editor doesn’t provide a function to match language selectors, so let’s just support
     // strings here.
@@ -51,30 +51,30 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
           registerMarkerDataProvider(
             monaco,
             language,
-            createMarkerDataProvider(workerManager.getWorker),
-          ),
-        );
+            createMarkerDataProvider(workerManager.getWorker)
+          )
+        )
       }
     }
 
     return {
       dispose() {
         for (const disposable of disposables) {
-          disposable.dispose();
+          disposable.dispose()
         }
       },
 
       setTailwindConfig(newTailwindConfig) {
-        workerManager.updateCreateData({ tailwindConfig: newTailwindConfig });
+        workerManager.updateCreateData({ tailwindConfig: newTailwindConfig })
       },
 
       async generateStylesFromContent(css, contents) {
-        const client = await workerManager.getWorker();
+        const client = await workerManager.getWorker()
 
         return client.generateStylesFromContent(
           css,
-          contents.map((content) => (typeof content === 'string' ? { content } : content)),
-        );
-      },
-    };
-  };
+          contents.map((content) => (typeof content === 'string' ? { content } : content))
+        )
+      }
+    }
+  }

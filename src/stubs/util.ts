@@ -1,1 +1,1 @@
-export const deprecate = <Fn>(fn: Fn): Fn => fn;
+export const deprecate = <Fn>(fn: Fn): Fn => fn

@@ -1,8 +1,8 @@
-const { join } = require('node:path');
+const { join } = require('node:path')
 
-const esbuild = require('esbuild');
+const esbuild = require('esbuild')
 
-const outputDir = join(__dirname, 'dist');
+const outputDir = join(__dirname, 'dist')
 
 /**
  * @param {import ('esbuild').BuildOptions} opts esbuild options
@@ -10,13 +10,13 @@ const outputDir = join(__dirname, 'dist');
 function build(opts) {
   esbuild.build(opts).then((result) => {
     if (result.errors.length > 0) {
-      console.error(result.errors);
+      console.error(result.errors)
     }
     if (result.warnings.length > 0) {
-      console.error(result.warnings);
+      console.error(result.warnings)
     }
-    console.info('build done');
-  });
+    console.info('build done')
+  })
 }
 
 /**
@@ -29,15 +29,15 @@ function serve(opts) {
     .serve(
       {
         servedir: __dirname,
-        host: '127.0.0.1',
+        host: '127.0.0.1'
       },
-      opts,
+      opts
     )
     .then((result) => {
-      const { host, port } = result;
-      console.info('serve done');
-      console.log(`open: http://${host}:${port}`);
-    });
+      const { host, port } = result
+      console.info('serve done')
+      console.log(`open: http://${host}:${port}`)
+    })
 }
 
 // Build the workers
@@ -49,14 +49,14 @@ build({
       'html.worker': 'monaco-editor/esm/vs/language/html/html.worker.js',
       'ts.worker': 'monaco-editor/esm/vs/language/typescript/ts.worker.js',
       'editor.worker': 'monaco-editor/esm/vs/editor/editor.worker.js',
-      'tailwindcss.worker': 'monaco-tailwindcss/tailwindcss.worker.js',
-    }).map(([outfile, entry]) => [outfile, require.resolve(entry)]),
+      'tailwindcss.worker': 'monaco-tailwindcss/tailwindcss.worker.js'
+    }).map(([outfile, entry]) => [outfile, require.resolve(entry)])
   ),
   outdir: outputDir,
   format: 'iife',
   bundle: true,
-  minify: true,
-});
+  minify: true
+})
 
 // Change this to `build()` for building.
 serve({
@@ -68,6 +68,6 @@ serve({
   // splitting: true, // optional and only works for esm
   outdir: outputDir,
   loader: {
-    '.ttf': 'file',
-  },
-});
+    '.ttf': 'file'
+  }
+})

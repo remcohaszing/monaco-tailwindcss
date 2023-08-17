@@ -1,1 +1,1 @@
-export { deprecate as default } from './util.js';
+export { deprecate as default } from './util.js'

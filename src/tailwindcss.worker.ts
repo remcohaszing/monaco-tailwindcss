@@ -1,14 +1,14 @@
-import { type MonacoTailwindcssOptions, type TailwindConfig } from 'monaco-tailwindcss';
-import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
-import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
-import postcss from 'postcss';
-import postcssSelectorParser from 'postcss-selector-parser';
-import { type Config } from 'tailwindcss';
-import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
-import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
-import { type ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
-import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
-import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
+import { type MonacoTailwindcssOptions, type TailwindConfig } from 'monaco-tailwindcss'
+import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker'
+import { initialize as initializeWorker } from 'monaco-worker-manager/worker'
+import postcss from 'postcss'
+import postcssSelectorParser from 'postcss-selector-parser'
+import { type Config } from 'tailwindcss'
+import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js'
+import { generateRules } from 'tailwindcss/src/lib/generateRules.js'
+import { type ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js'
+import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js'
+import resolveConfig from 'tailwindcss/src/public/resolve-config.js'
 import {
   type AugmentedDiagnostic,
   doComplete,
@@ -17,45 +17,45 @@ import {
   type EditorState,
   getColor,
   getDocumentColors,
-  resolveCompletionItem,
-} from 'tailwindcss-language-service';
+  resolveCompletionItem
+} from 'tailwindcss-language-service'
 import {
   type ColorInformation,
   type CompletionContext,
   type CompletionItem,
   type CompletionList,
   type Hover,
-  type Position,
-} from 'vscode-languageserver-protocol';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+  type Position
+} from 'vscode-languageserver-protocol'
+import { TextDocument } from 'vscode-languageserver-textdocument'
 
-import { type JitState } from './types.js';
+import { type JitState } from './types.js'
 
 export interface TailwindcssWorker {
   doComplete: (
     uri: string,
     languageId: string,
     position: Position,
-    context: CompletionContext,
-  ) => CompletionList | undefined;
+    context: CompletionContext
+  ) => CompletionList | undefined
 
-  doHover: (uri: string, languageId: string, position: Position) => Hover | undefined;
+  doHover: (uri: string, languageId: string, position: Position) => Hover | undefined
 
-  doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[];
+  doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[]
 
-  generateStylesFromContent: (css: string, content: ChangedContent[]) => string;
+  generateStylesFromContent: (css: string, content: ChangedContent[]) => string
 
-  getDocumentColors: (uri: string, languageId: string) => ColorInformation[];
+  getDocumentColors: (uri: string, languageId: string) => ColorInformation[]
 
-  resolveCompletionItem: (item: CompletionItem) => CompletionItem;
+  resolveCompletionItem: (item: CompletionItem) => CompletionItem
 }
 
 async function stateFromConfig(
-  configPromise: PromiseLike<TailwindConfig> | TailwindConfig,
+  configPromise: PromiseLike<TailwindConfig> | TailwindConfig
 ): Promise<JitState> {
-  const preparedTailwindConfig = await configPromise;
-  const config = resolveConfig(preparedTailwindConfig);
-  const jitContext = createContext(config);
+  const preparedTailwindConfig = await configPromise
+  const config = resolveConfig(preparedTailwindConfig)
+  const jitContext = createContext(config)
 
   const state: JitState = {
     version: '3.0.0',
@@ -64,18 +64,18 @@ async function stateFromConfig(
     modules: {
       postcss: {
         module: postcss,
-        version: '',
+        version: ''
       },
       postcssSelectorParser: { module: postcssSelectorParser },
       jit: {
         createContext: { module: createContext },
         expandApplyAtRules: { module: expandApplyAtRules },
-        generateRules: { module: generateRules },
-      },
+        generateRules: { module: generateRules }
+      }
     },
     classNames: {
       classNames: {},
-      context: {},
+      context: {}
     },
     jit: true,
     jitContext,
@@ -87,7 +87,7 @@ async function stateFromConfig(
       capabilities: {
         configuration: true,
         diagnosticRelatedInformation: true,
-        itemDefaults: [],
+        itemDefaults: []
       },
       // eslint-disable-next-line require-await
       async getConfiguration() {
@@ -111,32 +111,32 @@ async function stateFromConfig(
               invalidVariant: 'error',
               invalidConfigPath: 'error',
               invalidTailwindDirective: 'error',
-              recommendedVariantOrder: 'warning',
+              recommendedVariantOrder: 'warning'
             },
             showPixelEquivalents: true,
             includeLanguages: {},
             files: {
               // Upstream defines these values, but we don’t need them.
-              exclude: [],
+              exclude: []
             },
             experimental: {
               classRegex: [],
               // Upstream types are wrong
-              configFile: {},
-            },
-          },
-        };
-      },
+              configFile: {}
+            }
+          }
+        }
+      }
       // This option takes some properties that we don’t have nor need.
-    } as Partial<EditorState> as EditorState,
-  };
+    } as Partial<EditorState> as EditorState
+  }
 
   state.classList = jitContext
     .getClassList()
     .filter((className) => className !== '*')
-    .map((className) => [className, { color: getColor(state, className) }]);
+    .map((className) => [className, { color: getColor(state, className) }])
 
-  return state;
+  return state
 }
 
 export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void {
@@ -144,85 +144,85 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
     const preparedTailwindConfig =
       tailwindWorkerOptions?.prepareTailwindConfig?.(options.tailwindConfig) ??
       options.tailwindConfig ??
-      ({} as Config);
+      ({} as Config)
     if (typeof preparedTailwindConfig !== 'object') {
       throw new TypeError(
         `Expected tailwindConfig to resolve to an object, but got: ${JSON.stringify(
-          preparedTailwindConfig,
-        )}`,
-      );
+          preparedTailwindConfig
+        )}`
+      )
     }
 
-    const statePromise = stateFromConfig(preparedTailwindConfig);
+    const statePromise = stateFromConfig(preparedTailwindConfig)
 
     const getTextDocument = (uri: string, languageId: string): TextDocument | undefined => {
-      const models = ctx.getMirrorModels();
+      const models = ctx.getMirrorModels()
       for (const model of models) {
         if (String(model.uri) === uri) {
-          return TextDocument.create(uri, languageId, model.version, model.getValue());
+          return TextDocument.create(uri, languageId, model.version, model.getValue())
         }
       }
-    };
+    }
 
     return {
       async doComplete(uri, languageId, position, context) {
-        const textDocument = getTextDocument(uri, languageId);
+        const textDocument = getTextDocument(uri, languageId)
 
         if (!textDocument) {
-          return;
+          return
         }
 
-        return doComplete(await statePromise, textDocument, position, context);
+        return doComplete(await statePromise, textDocument, position, context)
       },
 
       async doHover(uri, languageId, position) {
-        const textDocument = getTextDocument(uri, languageId);
+        const textDocument = getTextDocument(uri, languageId)
 
         if (!textDocument) {
-          return;
+          return
         }
 
-        return doHover(await statePromise, textDocument, position);
+        return doHover(await statePromise, textDocument, position)
       },
 
       async doValidate(uri, languageId) {
-        const textDocument = getTextDocument(uri, languageId);
+        const textDocument = getTextDocument(uri, languageId)
 
         if (!textDocument) {
-          return [];
+          return []
         }
 
-        return doValidate(await statePromise, textDocument);
+        return doValidate(await statePromise, textDocument)
       },
 
       async generateStylesFromContent(css, content) {
-        const { config } = await statePromise;
+        const { config } = await statePromise
         const tailwind = processTailwindFeatures(
-          (processOptions) => () => processOptions.createContext(config, content),
-        );
+          (processOptions) => () => processOptions.createContext(config, content)
+        )
 
-        const processor = postcss([tailwind]);
+        const processor = postcss([tailwind])
 
-        const result = await processor.process(css);
-        return result.css;
+        const result = await processor.process(css)
+        return result.css
       },
 
       async getDocumentColors(uri, languageId) {
-        const textDocument = getTextDocument(uri, languageId);
+        const textDocument = getTextDocument(uri, languageId)
 
         if (!textDocument) {
-          return [];
+          return []
         }
 
-        return getDocumentColors(await statePromise, textDocument);
+        return getDocumentColors(await statePromise, textDocument)
       },
 
       async resolveCompletionItem(item) {
-        return resolveCompletionItem(await statePromise, item);
-      },
-    };
-  });
+        return resolveCompletionItem(await statePromise, item)
+      }
+    }
+  })
 }
 
 // Side effect initialization - but this function can be called more than once. Last applies.
-initialize();
+initialize()

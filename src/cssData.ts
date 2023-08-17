@@ -1,4 +1,4 @@
-import { type languages } from 'monaco-types';
+import { type languages } from 'monaco-types'
 
 function createTailwindDirective(name: string, value: string): languages.css.IAtDirectiveData {
   return {
@@ -7,10 +7,10 @@ function createTailwindDirective(name: string, value: string): languages.css.IAt
     references: [
       {
         name: `@${name} documentation`,
-        url: `https://tailwindcss.com/docs/functions-and-directives#${name}`,
-      },
-    ],
-  };
+        url: `https://tailwindcss.com/docs/functions-and-directives#${name}`
+      }
+    ]
+  }
 }
 
 // The descriptions have been taken from
@@ -47,8 +47,8 @@ const tailwindDirective = createTailwindDirective(
  * your stylesheet by default.
  */
 @tailwind variants;
-\`\`\``,
-);
+\`\`\``
+)
 
 const layerDirective = createTailwindDirective(
   'layer',
@@ -88,8 +88,8 @@ Tailwind will automatically move any CSS within a \`@layer\` directive to the sa
 
 Any custom CSS added to a layer will only be included in the final build if that CSS is actually used in your HTML, just like all of the classes built in to Tailwind by default.
 
-Wrapping any custom CSS in a \`@layer\` directive also makes it possible to use modifiers with those rules, like \`hover:\` and \`focus:\` or responsive modifiers like \`md:\` and \`lg:\`.`,
-);
+Wrapping any custom CSS in a \`@layer\` directive also makes it possible to use modifiers with those rules, like \`hover:\` and \`focus:\` or responsive modifiers like \`md:\` and \`lg:\`.`
+)
 
 const applyDirective = createTailwindDirective(
   'apply',
@@ -156,8 +156,8 @@ Note that if you're using Sass/SCSS, you'll need to use Sass' interpolation feat
 .btn {
   @apply font-bold py-2 px-4 rounded #{!important};
 }
-\`\`\``,
-);
+\`\`\``
+)
 
 const configDirective = createTailwindDirective(
   'config',
@@ -177,10 +177,10 @@ const configDirective = createTailwindDirective(
 @tailwind utilities;
 \`\`\`
 
-The path you provide to the \`@config\` directive is relative to that CSS file, and will take precedence over a path defined in your PostCSS configuration or in the Tailwind CLI.`,
-);
+The path you provide to the \`@config\` directive is relative to that CSS file, and will take precedence over a path defined in your PostCSS configuration or in the Tailwind CLI.`
+)
 
 export const tailwindcssData: languages.css.CSSDataV1 = {
   version: 1.1,
-  atDirectives: [tailwindDirective, layerDirective, applyDirective, configDirective],
-};
+  atDirectives: [tailwindDirective, layerDirective, applyDirective, configDirective]
+}

@@ -1,5 +1,5 @@
-import { type TailwindConfig } from 'monaco-tailwindcss';
-import { type Config } from 'tailwindcss';
+import { type TailwindConfig } from 'monaco-tailwindcss'
+import { type Config } from 'tailwindcss'
 
 export interface TailwindWorkerOptions {
   /**
@@ -10,12 +10,10 @@ export interface TailwindWorkerOptions {
    * @returns
    *   A valid Tailwind configuration.
    */
-  prepareTailwindConfig?: (
-    tailwindConfig?: TailwindConfig | string,
-  ) => Config | PromiseLike<Config>;
+  prepareTailwindConfig?: (tailwindConfig?: TailwindConfig | string) => Config | PromiseLike<Config>
 }
 
 /**
  * Setup the Tailwindcss worker using a customized configuration.
  */
-export function initialize(options?: TailwindWorkerOptions): void;
+export function initialize(options?: TailwindWorkerOptions): void

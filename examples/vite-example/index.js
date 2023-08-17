@@ -1,22 +1,22 @@
-import * as monaco from 'monaco-editor';
-import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker';
-import { configureMonacoTailwindcss } from 'monaco-tailwindcss';
-import TailwindcssWorker from 'monaco-tailwindcss/tailwindcss.worker.js?worker';
+import * as monaco from 'monaco-editor'
+import EditorWorker from 'monaco-editor/esm/vs/editor/editor.worker.js?worker'
+import { configureMonacoTailwindcss } from 'monaco-tailwindcss'
+import TailwindcssWorker from 'monaco-tailwindcss/tailwindcss.worker.js?worker'
 
 window.MonacoEnvironment = {
   getWorker(moduleId, label) {
     switch (label) {
       case 'editorWorkerService':
-        return new EditorWorker();
+        return new EditorWorker()
       case 'tailwindcss':
-        return new TailwindcssWorker();
+        return new TailwindcssWorker()
       default:
-        throw new Error(`Unknown label ${label}`);
+        throw new Error(`Unknown label ${label}`)
     }
-  },
-};
+  }
+}
 
-configureMonacoTailwindcss(monaco, {});
+configureMonacoTailwindcss(monaco, {})
 
 monaco.editor.create(document.getElementById('editor'), {
   automaticLayout: true,
@@ -30,5 +30,5 @@ monaco.editor.create(document.getElementById('editor'), {
     <div class="w-6 w-6 h-6 text-gray-600 bg-[#ff8888] hover:text-sky-600 ring-gray-900/5"></div>
   </body>
 </html>
-`,
-});
+`
+})
