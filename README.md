@@ -9,6 +9,20 @@
 [Tailwindcss](https://tailwindcss.com) integration for
 [Monaco editor](https://microsoft.github.io/monaco-editor).
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API](#api)
+  - [`monaco-tailwindcss`](#monaco-tailwindcss-1)
+    - [`configureMonacoTailwindcss(monaco, options?)`](#configuremonacotailwindcssmonaco-options)
+    - [`tailwindcssData`](#tailwindcssdata)
+  - [`monaco-tailwindcss/tailwindcss.worker`](#monaco-tailwindcsstailwindcssworker)
+    - [`initialize(options)`](#initializeoptions)
+- [Related projects](#related-projects)
+- [Showcase](#showcase)
+- [License](#license)
+
 ## Installation
 
 ```sh
