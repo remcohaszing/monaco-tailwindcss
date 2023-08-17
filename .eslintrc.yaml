@@ -8,12 +8,6 @@ rules:
   import/no-extraneous-dependencies: off
 
   jsdoc/require-jsdoc: off
-
-  n/no-extraneous-import: off
-  n/no-unsupported-features/es-builtins: off
-  n/no-unsupported-features/es-syntax: off
-  n/no-unsupported-features/node-builtins: off
-  n/prefer-global/process: off
 overrides:
   - files:
       - examples/esbuild-demo/build.js

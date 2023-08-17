@@ -9,11 +9,11 @@ import {
   toHover,
   toMarkerData,
 } from 'monaco-languageserver-types';
-import { MarkerDataProvider } from 'monaco-marker-data-provider';
-import { editor, languages, MonacoEditor } from 'monaco-types';
-import { WorkerGetter } from 'monaco-worker-manager';
+import { type MarkerDataProvider } from 'monaco-marker-data-provider';
+import { type editor, type languages, type MonacoEditor } from 'monaco-types';
+import { type WorkerGetter } from 'monaco-worker-manager';
 
-import { TailwindcssWorker } from './tailwindcss.worker.js';
+import { type TailwindcssWorker } from './tailwindcss.worker.js';
 
 type WorkerAccessor = WorkerGetter<TailwindcssWorker>;
 
@@ -122,8 +122,8 @@ export function createColorProvider(
         hexValue = hexValue.replace(/ff$/, '');
       }
 
-      const rgbValue = color.toRgbString().replace(/ /g, '');
-      const hslValue = color.toHslString().replace(/ /g, '');
+      const rgbValue = color.toRgbString().replaceAll(' ', '');
+      const hslValue = color.toHslString().replaceAll(' ', '');
       const prefix = className.slice(0, Math.max(0, match.index));
 
       return [

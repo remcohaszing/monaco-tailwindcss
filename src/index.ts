@@ -1,6 +1,6 @@
 import { setMonaco } from 'monaco-languageserver-types';
 import { registerMarkerDataProvider } from 'monaco-marker-data-provider';
-import { MonacoTailwindcssOptions } from 'monaco-tailwindcss';
+import { type MonacoTailwindcssOptions } from 'monaco-tailwindcss';
 import { createWorkerManager } from 'monaco-worker-manager';
 
 import {
@@ -9,7 +9,7 @@ import {
   createHoverProvider,
   createMarkerDataProvider,
 } from './languageFeatures.js';
-import { TailwindcssWorker } from './tailwindcss.worker.js';
+import { type TailwindcssWorker } from './tailwindcss.worker.js';
 
 export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typescript'] as const;
 

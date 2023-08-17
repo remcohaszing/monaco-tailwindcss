@@ -1,6 +1,10 @@
 import { parse } from 'jsonc-parser';
 import * as monaco from 'monaco-editor';
-import { configureMonacoTailwindcss, TailwindConfig, tailwindcssData } from 'monaco-tailwindcss';
+import {
+  configureMonacoTailwindcss,
+  type TailwindConfig,
+  tailwindcssData,
+} from 'monaco-tailwindcss';
 
 import './index.css';
 

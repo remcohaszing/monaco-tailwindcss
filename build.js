@@ -23,6 +23,7 @@ await build({
     'process.env.DEBUG': 'undefined',
     'process.env.JEST_WORKER_ID': '1',
     'process.env.NODE_ENV': '"production"',
+    __OXIDE__: 'undefined',
     __dirname: '"/"',
   },
   plugins: [
@@ -97,10 +98,9 @@ await build({
         onLoad({ filter: /\/node_modules\/tailwindcss\/.+\.js$/ }, async ({ path }) => {
           const source = await readFile(path, 'utf8');
           const contents = source
-            .replace(/(process\.)?env\.DEBUG/g, 'undefined')
-            .replace(/(process\.)?env\.ENGINE/g, 'undefined')
-            .replace(/(process\.)?env\.NODE_ENV/g, '"production"')
-            .replace(/(process\.)?env\.OXIDE/g, 'undefined');
+            .replaceAll(/(process\.)?env\.DEBUG/g, 'undefined')
+            .replaceAll(/(process\.)?env\.ENGINE/g, '"stable"')
+            .replaceAll(/(process\.)?env\.NODE_ENV/g, '"production"');
           return { contents };
         });
       },

@@ -1,35 +1,35 @@
-import { MonacoTailwindcssOptions, TailwindConfig } from 'monaco-tailwindcss';
-import { TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
+import { type MonacoTailwindcssOptions, type TailwindConfig } from 'monaco-tailwindcss';
+import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker';
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker';
-import postcss, { Processor } from 'postcss';
+import postcss from 'postcss';
 import postcssSelectorParser from 'postcss-selector-parser';
-import { Config } from 'tailwindcss';
+import { type Config } from 'tailwindcss';
 import expandApplyAtRules from 'tailwindcss/src/lib/expandApplyAtRules.js';
 import { generateRules } from 'tailwindcss/src/lib/generateRules.js';
-import { ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
+import { type ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js';
 import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js';
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js';
 import {
-  AugmentedDiagnostic,
+  type AugmentedDiagnostic,
   doComplete,
   doHover,
   doValidate,
-  EditorState,
+  type EditorState,
   getColor,
   getDocumentColors,
   resolveCompletionItem,
 } from 'tailwindcss-language-service';
-import { CompletionContext } from 'vscode-languageserver-protocol';
-import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
-  ColorInformation,
-  CompletionItem,
-  CompletionList,
-  Hover,
-  Position,
-} from 'vscode-languageserver-types';
+  type ColorInformation,
+  type CompletionContext,
+  type CompletionItem,
+  type CompletionList,
+  type Hover,
+  type Position,
+} from 'vscode-languageserver-protocol';
+import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { JitState } from './types.js';
+import { type JitState } from './types.js';
 
 export interface TailwindcssWorker {
   doComplete: (
@@ -63,7 +63,6 @@ async function stateFromConfig(
     enabled: true,
     modules: {
       postcss: {
-        // @ts-expect-error https://github.com/postcss/postcss/pull/1815
         module: postcss,
         version: '',
       },
@@ -202,8 +201,7 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
           (processOptions) => () => processOptions.createContext(config, content),
         );
 
-        // @ts-expect-error https://github.com/postcss/postcss/pull/1815
-        const processor = postcss([tailwind]) as Processor;
+        const processor = postcss([tailwind]);
 
         const result = await processor.process(css);
         return result.css;
