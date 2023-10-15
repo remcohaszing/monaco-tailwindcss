@@ -41,11 +41,11 @@ export interface TailwindcssWorker {
 
   doHover: (uri: string, languageId: string, position: Position) => Hover | undefined
 
-  doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[]
+  doValidate: (uri: string, languageId: string) => AugmentedDiagnostic[] | undefined
 
   generateStylesFromContent: (css: string, content: ChangedContent[]) => string
 
-  getDocumentColors: (uri: string, languageId: string) => ColorInformation[]
+  getDocumentColors: (uri: string, languageId: string) => ColorInformation[] | undefined
 
   resolveCompletionItem: (item: CompletionItem) => CompletionItem
 }
@@ -155,45 +155,31 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
 
     const statePromise = stateFromConfig(preparedTailwindConfig)
 
-    const getTextDocument = (uri: string, languageId: string): TextDocument | undefined => {
-      const models = ctx.getMirrorModels()
-      for (const model of models) {
-        if (String(model.uri) === uri) {
-          return TextDocument.create(uri, languageId, model.version, model.getValue())
+    const withDocument =
+      <A extends unknown[], R>(
+        fn: (state: JitState, document: TextDocument, ...args: A) => Promise<R>
+      ) =>
+      (uri: string, languageId: string, ...args: A): Promise<R> | undefined => {
+        const models = ctx.getMirrorModels()
+        for (const model of models) {
+          if (String(model.uri) === uri) {
+            return statePromise.then((state) =>
+              fn(
+                state,
+                TextDocument.create(uri, languageId, model.version, model.getValue()),
+                ...args
+              )
+            )
+          }
         }
       }
-    }
 
     return {
-      async doComplete(uri, languageId, position, context) {
-        const textDocument = getTextDocument(uri, languageId)
+      doComplete: withDocument(doComplete),
 
-        if (!textDocument) {
-          return
-        }
+      doHover: withDocument(doHover),
 
-        return doComplete(await statePromise, textDocument, position, context)
-      },
-
-      async doHover(uri, languageId, position) {
-        const textDocument = getTextDocument(uri, languageId)
-
-        if (!textDocument) {
-          return
-        }
-
-        return doHover(await statePromise, textDocument, position)
-      },
-
-      async doValidate(uri, languageId) {
-        const textDocument = getTextDocument(uri, languageId)
-
-        if (!textDocument) {
-          return []
-        }
-
-        return doValidate(await statePromise, textDocument)
-      },
+      doValidate: withDocument(doValidate),
 
       async generateStylesFromContent(css, content) {
         const { config } = await statePromise
@@ -207,15 +193,7 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
         return result.css
       },
 
-      async getDocumentColors(uri, languageId) {
-        const textDocument = getTextDocument(uri, languageId)
-
-        if (!textDocument) {
-          return []
-        }
-
-        return getDocumentColors(await statePromise, textDocument)
-      },
+      getDocumentColors: withDocument(getDocumentColors),
 
       async resolveCompletionItem(item) {
         return resolveCompletionItem(await statePromise, item)

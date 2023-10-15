@@ -62,13 +62,15 @@ export function createColorProvider(
       const editableColors: languages.IColorInformation[] = []
       const nonEditableColors: languages.IColorInformation[] = []
       const colors = await worker.getDocumentColors(String(model.uri), model.getLanguageId())
-      for (const lsColor of colors) {
-        const monacoColor = toColorInformation(lsColor)
-        const text = model.getValueInRange(monacoColor.range)
-        if (editableColorRegex.test(text)) {
-          editableColors.push(monacoColor)
-        } else {
-          nonEditableColors.push(monacoColor)
+      if (colors) {
+        for (const lsColor of colors) {
+          const monacoColor = toColorInformation(lsColor)
+          const text = model.getValueInRange(monacoColor.range)
+          if (editableColorRegex.test(text)) {
+            editableColors.push(monacoColor)
+          } else {
+            nonEditableColors.push(monacoColor)
+          }
         }
       }
 
@@ -199,7 +201,7 @@ export function createMarkerDataProvider(getWorker: WorkerAccessor): MarkerDataP
 
       const diagnostics = await worker.doValidate(String(model.uri), model.getLanguageId())
 
-      return diagnostics.map((diagnostic) => toMarkerData(diagnostic))
+      return diagnostics?.map((diagnostic) => toMarkerData(diagnostic))
     }
   }
 }
