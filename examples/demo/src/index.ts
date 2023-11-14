@@ -176,12 +176,6 @@ function getModel(): monaco.editor.ITextModel {
   }
 }
 
-monaco.languages.register({
-  id: 'mdx',
-  extensions: ['.mdx'],
-  aliases: ['MDX', 'mdx']
-})
-
 const theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'vs-dark' : 'vs-light'
 const ed = monaco.editor.create(document.getElementById('editor')!, {
   automaticLayout: true,
