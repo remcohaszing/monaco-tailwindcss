@@ -24,7 +24,7 @@ jobs:
         with: { node-version: 18 }
       - run: npm ci
       - run: npm run prepack
-      - run: npm run build --workspaces
+      - run: npm run build --workspaces --if-present
 
   pack:
     runs-on: ubuntu-latest
