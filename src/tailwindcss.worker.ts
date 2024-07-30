@@ -1,3 +1,13 @@
+import {
+  type AugmentedDiagnostic,
+  doComplete,
+  doHover,
+  doValidate,
+  type EditorState,
+  getColor,
+  getDocumentColors,
+  resolveCompletionItem
+} from '@tailwindcss/language-service'
 import { type MonacoTailwindcssOptions, type TailwindConfig } from 'monaco-tailwindcss'
 import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker'
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker'
@@ -9,16 +19,6 @@ import { generateRules } from 'tailwindcss/src/lib/generateRules.js'
 import { type ChangedContent, createContext } from 'tailwindcss/src/lib/setupContextUtils.js'
 import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js'
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js'
-import {
-  type AugmentedDiagnostic,
-  doComplete,
-  doHover,
-  doValidate,
-  type EditorState,
-  getColor,
-  getDocumentColors,
-  resolveCompletionItem
-} from 'tailwindcss-language-service'
 import {
   type ColorInformation,
   type CompletionContext,
@@ -59,6 +59,7 @@ async function stateFromConfig(
 
   const state: JitState = {
     version: '3.0.0',
+    blocklist: [],
     config,
     enabled: true,
     modules: {

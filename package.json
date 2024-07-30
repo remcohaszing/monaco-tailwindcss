@@ -38,9 +38,12 @@
   "dependencies": {
     "@alloc/quick-lru": "^5.0.0",
     "@ctrl/tinycolor": "^3.0.0",
-    "becke-ch--regex--s0-0-v1--base--pl--lib": "^1.0.0",
+    "@csstools/css-parser-algorithms": "^2.0.0",
+    "@csstools/css-tokenizer": "^2.0.0",
+    "@csstools/media-query-list-parser": "^2.0.0",
     "color-name": "^2.0.0",
     "css.escape": "^1.0.0",
+    "culori": "^4.0.0",
     "didyoumean": "^1.0.0",
     "dlv": "^1.0.0",
     "line-column": "^1.0.0",
@@ -58,27 +61,26 @@
     "stringify-object": "^5.0.0",
     "tailwindcss": "^3.0.0",
     "tmp-cache": "^1.0.0",
-    "vscode-languageserver-textdocument": "^1.0.0"
+    "vscode-languageserver-textdocument": "^1.0.0",
+    "vscode-languageserver-types": "^3.0.0"
   },
   "peerDependencies": {
     "monaco-editor": ">=0.36"
   },
   "devDependencies": {
-    "@types/culori": "^2.0.0",
+    "@tailwindcss/language-service": "0.0.32",
     "esbuild": "^0.19.0",
     "eslint": "^8.0.0",
     "eslint-config-remcohaszing": "^10.0.0",
     "prettier": "^3.0.0",
     "remark-cli": "^11.0.0",
     "remark-preset-remcohaszing": "^2.0.0",
-    "tailwindcss-language-service": "0.0.28",
     "typescript": "^5.0.0",
     "vscode-languageserver-protocol": "^3.0.0"
   },
   "overrides": {
-    "tailwindcss-language-service": {
-      "postcss": "^8.0.0",
-      "postcss-selector-parser": "^6.0.0"
+    "@tailwindcss/language-service": {
+      "postcss": "^8.0.0"
     }
   }
 }

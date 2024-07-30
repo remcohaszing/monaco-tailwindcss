@@ -12,8 +12,8 @@ declare module 'tailwindcss/src/lib/generateRules.js' {
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
+  import { type Variant } from '@tailwindcss/language-service'
   import { type Config } from 'tailwindcss'
-  import { type Variant } from 'tailwindcss-language-service'
 
   interface ChangedContent {
     content: string

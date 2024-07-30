@@ -50,12 +50,6 @@ await build({
           resolve(path.replace('lib', 'src'), options)
         )
 
-        // The tailwindcss-language-service main export exports CJS by default, but we get better
-        // tree shaking if we import the ESM variant.
-        onResolve({ filter: /^tailwindcss-language-service$/ }, ({ path, ...options }) =>
-          resolve('tailwindcss-language-service/dist/tailwindcss-language-service.esm.js', options)
-        )
-
         // This file pulls in a number of dependencies, but we don’t really need it anyway.
         onResolve({ filter: /^\.+\/(util\/)?log$/, namespace: 'file' }, ({ path, ...options }) => {
           if (options.importer.includes(`${sep}tailwindcss${sep}`)) {
@@ -69,17 +63,19 @@ await build({
           })
         })
 
-        // The culori main export exports CJS by default, but we get better tree shaking if we
-        // import the ESM variant.
-        onResolve({ filter: /^culori$/ }, ({ path, ...options }) =>
-          resolve('culori/build/culori.js', options)
-        )
-
         // CJS doesn’t require extensions, but ESM does. Since our package uses ESM, but dependant
         // bundled packages don’t, we need to add it ourselves.
         onResolve(
           { filter: /^(postcss-selector-parser|semver)\/.*\/\w+$/ },
           ({ path, ...options }) => resolve(`${path}.js`, options)
+        )
+
+        onResolve({ filter: /^postcss-value-parser$/ }, ({ path, ...options }) =>
+          resolve('tailwindcss/src/value-parser', options)
+        )
+
+        onResolve({ filter: /^vscode-languageserver$/ }, ({ path, ...options }) =>
+          resolve('vscode-languageserver-types', options)
         )
 
         // Rewrite the tailwind stubs from CJS to ESM, so our bundle doesn’t need to include any CJS
