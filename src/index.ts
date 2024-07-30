@@ -4,6 +4,7 @@ import { type MonacoTailwindcssOptions } from 'monaco-tailwindcss'
 import { createWorkerManager } from 'monaco-worker-manager'
 
 import {
+  createCodeActionProvider,
   createColorProvider,
   createCompletionItemProvider,
   createHoverProvider,
@@ -27,6 +28,10 @@ export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').con
 
     const disposables = [
       workerManager,
+      monaco.languages.registerCodeActionProvider(
+        languageSelector,
+        createCodeActionProvider(workerManager.getWorker)
+      ),
       monaco.languages.registerColorProvider(
         languageSelector,
         createColorProvider(monaco, workerManager.getWorker)

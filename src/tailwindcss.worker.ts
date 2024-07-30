@@ -1,5 +1,6 @@
 import {
   type AugmentedDiagnostic,
+  doCodeActions,
   doComplete,
   doHover,
   doValidate,
@@ -20,18 +21,28 @@ import { type ChangedContent, createContext } from 'tailwindcss/src/lib/setupCon
 import processTailwindFeatures from 'tailwindcss/src/processTailwindFeatures.js'
 import resolveConfig from 'tailwindcss/src/public/resolve-config.js'
 import {
+  type CodeAction,
+  type CodeActionContext,
   type ColorInformation,
   type CompletionContext,
   type CompletionItem,
   type CompletionList,
   type Hover,
-  type Position
+  type Position,
+  type Range
 } from 'vscode-languageserver-protocol'
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 import { type JitState } from './types.js'
 
 export interface TailwindcssWorker {
+  doCodeActions: (
+    uri: string,
+    languageId: string,
+    range: Range,
+    context: CodeActionContext
+  ) => CodeAction[] | undefined
+
   doComplete: (
     uri: string,
     languageId: string,
@@ -176,6 +187,10 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
       }
 
     return {
+      doCodeActions: withDocument((state, textDocument, range, context) =>
+        doCodeActions(state, { range, context, textDocument }, textDocument)
+      ),
+
       doComplete: withDocument(doComplete),
 
       doHover: withDocument(doHover),

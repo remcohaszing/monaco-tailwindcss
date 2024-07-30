@@ -1,8 +1,11 @@
 import { fromRatio, names as namedColors } from '@ctrl/tinycolor'
 import {
+  fromCodeActionContext,
   fromCompletionContext,
   fromCompletionItem,
   fromPosition,
+  fromRange,
+  toCodeAction,
   toColorInformation,
   toCompletionItem,
   toCompletionList,
@@ -149,6 +152,30 @@ export function createHoverProvider(getWorker: WorkerAccessor): languages.HoverP
       )
 
       return hover && toHover(hover)
+    }
+  }
+}
+
+export function createCodeActionProvider(getWorker: WorkerAccessor): languages.CodeActionProvider {
+  return {
+    async provideCodeActions(model, range, context) {
+      const worker = await getWorker(model.uri)
+
+      const codeActions = await worker.doCodeActions(
+        String(model.uri),
+        model.getLanguageId(),
+        fromRange(range),
+        fromCodeActionContext(context)
+      )
+
+      if (codeActions) {
+        return {
+          actions: codeActions.map((codeAction) => toCodeAction(codeAction)),
+          dispose() {
+            // Do nothing
+          }
+        }
+      }
     }
   }
 }
