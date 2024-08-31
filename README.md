@@ -15,10 +15,7 @@
 - [Usage](#usage)
 - [API](#api)
   - [`monaco-tailwindcss`](#monaco-tailwindcss-1)
-    - [`configureMonacoTailwindcss(monaco, options?)`](#configuremonacotailwindcssmonaco-options)
-    - [`tailwindcssData`](#tailwindcssdata)
   - [`monaco-tailwindcss/tailwindcss.worker`](#monaco-tailwindcsstailwindcssworker)
-    - [`initialize(options)`](#initializeoptions)
 - [Related projects](#related-projects)
 - [Showcase](#showcase)
 - [License](#license)
@@ -156,4 +153,4 @@ Setup the Tailwindcss worker using a customized configuration.
 
 ## License
 
-[MIT](LICENSE.md) @ [Remco Haszing](https://github.com/remcohaszing)
+[MIT](LICENSE.md) © [Remco Haszing](https://github.com/remcohaszing)
