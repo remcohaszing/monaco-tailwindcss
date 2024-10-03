@@ -182,7 +182,7 @@ const ed = monaco.editor.create(document.getElementById('editor')!, {
   theme,
   colorDecorators: true,
   model: getModel(),
-  wordBasedSuggestions: false
+  wordBasedSuggestions: 'off'
 })
 
 const outputPane = document.getElementById('output')!
