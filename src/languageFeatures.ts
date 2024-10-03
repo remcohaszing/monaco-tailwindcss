@@ -170,7 +170,7 @@ export function createCodeActionProvider(getWorker: WorkerAccessor): languages.C
 
       if (codeActions) {
         return {
-          actions: codeActions.map((codeAction) => toCodeAction(codeAction)),
+          actions: codeActions.map(toCodeAction),
           dispose() {
             // Do nothing
           }
@@ -228,7 +228,7 @@ export function createMarkerDataProvider(getWorker: WorkerAccessor): MarkerDataP
 
       const diagnostics = await worker.doValidate(String(model.uri), model.getLanguageId())
 
-      return diagnostics?.map((diagnostic) => toMarkerData(diagnostic))
+      return diagnostics?.map(toMarkerData)
     }
   }
 }
