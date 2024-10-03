@@ -24,8 +24,8 @@ const colorNames = Object.values(namedColors)
 const editableColorRegex = new RegExp(
   `-\\[(${colorNames.join('|')}|((?:#|rgba?\\(|hsla?\\())[^\\]]+)\\]$`
 )
-const stylesheet = document.createElement('style')
-document.head.append(stylesheet)
+const sheet = new CSSStyleSheet()
+document.adoptedStyleSheets.push(sheet)
 
 function colorValueToHex(value: number): string {
   return Math.round(value * 255)
@@ -39,12 +39,12 @@ function createColorClass(color: languages.IColor): string {
   )}`
   const className = `tailwindcss-color-decoration-${hex}`
   const selector = `.${className}`
-  for (const rule of stylesheet.sheet!.cssRules) {
+  for (const rule of sheet.cssRules) {
     if ((rule as CSSStyleRule).selectorText === selector) {
       return className
     }
   }
-  stylesheet.sheet!.insertRule(`${selector}{background-color:#${hex}}`)
+  sheet.insertRule(`${selector}{background-color:#${hex}}`)
   return className
 }
 
@@ -63,7 +63,7 @@ export function createColorProvider(
       const worker = await getWorker(model.uri)
 
       const editableColors: languages.IColorInformation[] = []
-      const nonEditableColors: languages.IColorInformation[] = []
+      const nonEditableColors: editor.IModelDeltaDecoration[] = []
       const colors = await worker.getDocumentColors(String(model.uri), model.getLanguageId())
       if (colors) {
         for (const lsColor of colors) {
@@ -72,27 +72,21 @@ export function createColorProvider(
           if (editableColorRegex.test(text)) {
             editableColors.push(monacoColor)
           } else {
-            nonEditableColors.push(monacoColor)
+            nonEditableColors.push({
+              range: monacoColor.range,
+              options: {
+                before: {
+                  content: '\u00A0',
+                  inlineClassName: `${createColorClass(monacoColor.color)} colorpicker-color-decoration`,
+                  inlineClassNameAffectsLetterSpacing: true
+                }
+              }
+            })
           }
         }
       }
 
-      modelMap.set(
-        model,
-        model.deltaDecorations(
-          modelMap.get(model) ?? [],
-          nonEditableColors.map(({ color, range }) => ({
-            range,
-            options: {
-              before: {
-                content: '\u00A0',
-                inlineClassName: `${createColorClass(color)} colorpicker-color-decoration`,
-                inlineClassNameAffectsLetterSpacing: true
-              }
-            }
-          }))
-        )
-      )
+      modelMap.set(model, model.deltaDecorations(modelMap.get(model) ?? [], nonEditableColors))
 
       return editableColors
     },
