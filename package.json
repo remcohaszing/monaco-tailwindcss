@@ -1,6 +1,6 @@
 {
-  "name": "monaco-tailwindcss",
-  "version": "0.6.1",
+  "name": "wkd/monaco-tailwindcss",
+  "version": "0.0.1",
   "description": "Tailwindcss integration for Monaco editor",
   "files": [
     "index.js",
