@@ -10,7 +10,7 @@ export interface TailwindWorkerOptions {
    * @returns
    *   A valid Tailwind configuration.
    */
-  prepareTailwindConfig?: (tailwindConfig?: TailwindConfig | string) => Config | PromiseLike<Config>
+  prepareTailwindConfig?: (tailwindConfig?: TailwindConfig | string) => Config
 }
 
 /**

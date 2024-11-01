@@ -4,12 +4,19 @@ import {
   doComplete,
   doHover,
   doValidate,
+  EditorSettings,
   type EditorState,
   getColor,
   getDocumentColors,
-  resolveCompletionItem
+  resolveCompletionItem,
+  Settings,
+  TailwindCssSettings
 } from '@tailwindcss/language-service'
-import { type MonacoTailwindcssOptions, type TailwindConfig } from 'monaco-tailwindcss'
+import {
+  TailwindPluginAPI,
+  type MonacoTailwindcssOptions,
+  type TailwindConfig
+} from 'monaco-tailwindcss'
 import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker'
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker'
 import postcss from 'postcss'
@@ -34,6 +41,7 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument'
 
 import { type JitState } from './types.js'
+import { PluginAPI } from 'tailwindcss/types/config.js'
 
 export interface TailwindcssWorker {
   doCodeActions: (
@@ -62,7 +70,8 @@ export interface TailwindcssWorker {
 }
 
 async function stateFromConfig(
-  configPromise: PromiseLike<TailwindConfig> | TailwindConfig
+  configPromise: PromiseLike<TailwindConfig> | TailwindConfig,
+  intellisense?: { editor?: EditorSettings; tailwindCSS?: Partial<TailwindCssSettings> }
 ): Promise<JitState> {
   const preparedTailwindConfig = await configPromise
   const config = resolveConfig(preparedTailwindConfig)
@@ -103,13 +112,16 @@ async function stateFromConfig(
       },
       // eslint-disable-next-line require-await
       async getConfiguration() {
+        const { editor, tailwindCSS } = intellisense || {}
+        const { classAttributes = [], lint = {}, ...tailwindOptions } = tailwindCSS || {}
+
         return {
-          editor: { tabSize: 2 },
+          editor: { tabSize: 2, ...editor },
           // Default values are based on
           // https://github.com/tailwindlabs/tailwindcss-intellisense/blob/v0.9.1/packages/tailwindcss-language-server/src/server.ts#L259-L287
           tailwindCSS: {
             emmetCompletions: false,
-            classAttributes: ['class', 'className', 'ngClass'],
+            classAttributes: ['class', 'className', 'ngClass', ...classAttributes],
             codeActions: true,
             hovers: true,
             suggestions: true,
@@ -123,7 +135,8 @@ async function stateFromConfig(
               invalidVariant: 'error',
               invalidConfigPath: 'error',
               invalidTailwindDirective: 'error',
-              recommendedVariantOrder: 'warning'
+              recommendedVariantOrder: 'warning',
+              ...lint
             },
             showPixelEquivalents: true,
             includeLanguages: {},
@@ -135,7 +148,8 @@ async function stateFromConfig(
               classRegex: [],
               // Upstream types are wrong
               configFile: {}
-            }
+            },
+            ...tailwindOptions
           }
         }
       }
@@ -147,6 +161,8 @@ async function stateFromConfig(
     .getClassList()
     .filter((className) => className !== '*')
     .map((className) => [className, { color: getColor(state, className) }])
+
+  state.classList.push(['testing', { color: getColor(state, 'testing') }])
 
   return state
 }
@@ -165,7 +181,27 @@ export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void 
       )
     }
 
-    const statePromise = stateFromConfig(preparedTailwindConfig)
+    const formattedConfig = {
+      ...preparedTailwindConfig,
+      plugins: [
+        ...(preparedTailwindConfig.plugins || []),
+        (pluginAPI: PluginAPI) => {
+          const plugins = options.pluginAPI
+          const apis = Object.keys(plugins || []) as (keyof PluginAPI)[]
+
+          apis.forEach((api) => {
+            if (!plugins || !(api in pluginAPI)) return
+
+            const builtInFunction = pluginAPI[api]
+            const args = plugins[api]
+            //@ts-expect-error
+            builtInFunction(...args)
+          })
+        }
+      ]
+    }
+
+    const statePromise = stateFromConfig(formattedConfig, options.intellisense)
 
     const withDocument =
       <A extends unknown[], R>(

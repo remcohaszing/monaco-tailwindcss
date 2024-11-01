@@ -1,10 +1,21 @@
+import { EditorSettings, TailwindCssSettings } from '@tailwindcss/language-service'
 import { type IDisposable, type languages, type MonacoEditor } from 'monaco-types'
 import { type Config } from 'tailwindcss'
+import { PluginAPI } from 'tailwindcss/types/config.js'
 
 /**
- * A Tailwind configuration, but without content.
+ * A Tailwind configuration, where all properties are optional.
  */
-export type TailwindConfig = Omit<Config, 'content'>
+export type TailwindConfig = Partial<Config>
+
+/**
+ * An object of the arguments for the Tailwind's built-in Plugin API.
+ */
+export type TailwindPluginAPI = Partial<{
+  [T in keyof PluginAPI]: Parameters<PluginAPI[T]>
+}>
+
+type DiagnosticSeveritySetting = 'ignore' | 'warning' | 'error'
 
 export interface MonacoTailwindcssOptions {
   /**
@@ -19,6 +30,114 @@ export interface MonacoTailwindcssOptions {
    * worker.
    */
   tailwindConfig?: TailwindConfig | string
+  /**
+   * Extend Intellisense's settings.
+   * 
+   * Default values are based on the VS Code extension.
+   * 
+   * ``` typescript
+   * const defaultSettings = {
+      editor: {tabSize: 2},
+      tailwindCSS: {
+        emmetCompletions: false,
+        classAttributes: ["class", "className", "ngClass"],
+        codeActions: true,
+        hovers: true,
+        suggestions: true,
+        validate: true,
+        colorDecorators: true,
+        rootFontSize: 16,
+        showPixelEquivalents: true,
+        includeLanguages: {},
+        files: {exclude: []},
+        experimental: {
+          classRegex: [],
+          configFile: {}
+        },
+        lint: {
+          cssConflict: "warning",
+          invalidApply: "error",
+          invalidScreen: "error",
+          invalidVariant: "error",
+          invalidConfigPath: "error",
+          invalidTailwindDirective: "error",
+          recommendedVariantOrder: "warning"
+        },
+      }
+    }
+   */
+  intellisense?: Partial<{
+    editor: {
+      tabSize: number
+    }
+    tailwindCSS: Partial<{
+      emmetCompletions: boolean
+      includeLanguages: Record<string, string>
+      classAttributes: string[]
+      suggestions: boolean
+      hovers: boolean
+      codeActions: boolean
+      validate: boolean
+      showPixelEquivalents: boolean
+      rootFontSize: number
+      colorDecorators: boolean
+      files: { exclude: string[] }
+      experimental: {
+        classRegex: string[]
+        configFile: string | Record<string, string | string[]>
+      }
+      lint: {
+        cssConflict: DiagnosticSeveritySetting
+        invalidApply: DiagnosticSeveritySetting
+        invalidScreen: DiagnosticSeveritySetting
+        invalidVariant: DiagnosticSeveritySetting
+        invalidConfigPath: DiagnosticSeveritySetting
+        invalidTailwindDirective: DiagnosticSeveritySetting
+        recommendedVariantOrder: DiagnosticSeveritySetting
+      }
+    }>
+  }>
+  /**
+ * A way to call Tailwind's built-in Plugin API within the worker.
+ * ``` typescript
+ * 
+   // Instead of calling the functions like this...
+ * const tailwindConfig = {
+ *  // ...config
+ *  plugins: [
+      ({addUtilities}) => {
+        addUtilities({
+          '.custom-class': {
+            color: '#000000',
+            'font-size': '1rem',
+            'font-weight': 900
+          }
+        })
+      }
+    ]
+ * }
+
+// ...you provide an array of the parameters for each function you want to call.
+// Note that the arguments you pass must be serializable,
+// e.g they can't include functions.
+
+ * const tailwindConfig = {
+ *  // ...config
+ *  pluginAPI: {
+ *    addUtilities: [
+ *      {
+ *        '.custom-class': {
+ *          color: '#000000',
+ *          'font-size': '1rem',
+ *          'font-weight': 900
+ *        }
+ *      }
+ *    ]
+ *  }
+ * }
+ * ```
+ */
+  pluginAPI?: TailwindPluginAPI
 }
 
 /**
