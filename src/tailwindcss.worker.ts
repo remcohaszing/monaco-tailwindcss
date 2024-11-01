@@ -162,8 +162,6 @@ async function stateFromConfig(
     .filter((className) => className !== '*')
     .map((className) => [className, { color: getColor(state, className) }])
 
-  state.classList.push(['testing', { color: getColor(state, 'testing') }])
-
   return state
 }
 

@@ -1,4 +1,3 @@
-import { EditorSettings, TailwindCssSettings } from '@tailwindcss/language-service'
 import { type IDisposable, type languages, type MonacoEditor } from 'monaco-types'
 import { type Config } from 'tailwindcss'
 import { PluginAPI } from 'tailwindcss/types/config.js'
@@ -103,7 +102,7 @@ export interface MonacoTailwindcssOptions {
  * 
    // Instead of calling the functions like this...
  * const tailwindConfig = {
- *  // ...config
+   // ...config
  *  plugins: [
       ({addUtilities}) => {
         addUtilities({
@@ -122,7 +121,7 @@ export interface MonacoTailwindcssOptions {
 // e.g they can't include functions.
 
  * const tailwindConfig = {
- *  // ...config
+   // ...config
  *  pluginAPI: {
  *    addUtilities: [
  *      {
