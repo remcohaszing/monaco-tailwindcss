@@ -108,8 +108,8 @@ export interface MonacoTailwindcssOptions {
         addUtilities({
           '.custom-class': {
             color: '#000000',
-            'font-size': '1rem',
-            'font-weight': 900
+            fontSize: '1rem',
+            fontWeight: 900
           }
         })
       }
@@ -130,8 +130,8 @@ export interface MonacoTailwindcssOptions {
  *      {
  *        '.custom-class': {
  *          color: '#000000',
- *          'font-size': '1rem',
- *          'font-weight': 900
+ *          fontSize: '1rem',
+ *          fontWeight: 900
  *        }
  *      }
  *    ]
