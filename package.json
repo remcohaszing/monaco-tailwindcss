@@ -1,6 +1,6 @@
 {
-  "name": "monaco-tailwindcss",
-  "version": "0.6.1",
+  "name": "monaco-tailwind",
+  "version": "0.1.0",
   "description": "Tailwindcss integration for Monaco editor",
   "files": [
     "index.js",
@@ -23,7 +23,10 @@
     "./tailwindcss.worker": "./tailwindcss.worker.js",
     "./tailwindcss.worker.js": "./tailwindcss.worker.js"
   },
-  "repository": "remcohaszing/monaco-tailwindcss",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remcohaszing/monaco-tailwindcss.git"
+  },
   "keywords": [
     "monaco",
     "monaco-editor",
@@ -32,15 +35,19 @@
   ],
   "author": "Remco Haszing <remcohaszing@gmail.com>",
   "license": "MIT",
-  "bugs": "https://github.com/remcohaszing/monaco-tailwindcss/issues",
+  "bugs": {
+    "url": "https://github.com/remcohaszing/monaco-tailwindcss/issues"
+  },
   "homepage": "https://monaco-tailwindcss.js.org",
-  "funding": "https://github.com/sponsors/remcohaszing",
+  "funding": {
+    "url": "https://github.com/sponsors/remcohaszing"
+  },
   "dependencies": {
     "@alloc/quick-lru": "^5.0.0",
-    "@ctrl/tinycolor": "^3.0.0",
     "@csstools/css-parser-algorithms": "^2.0.0",
     "@csstools/css-tokenizer": "^2.0.0",
     "@csstools/media-query-list-parser": "^2.0.0",
+    "@ctrl/tinycolor": "^3.0.0",
     "color-name": "^2.0.0",
     "css.escape": "^1.0.0",
     "culori": "^4.0.0",
@@ -49,6 +56,7 @@
     "line-column": "^1.0.0",
     "monaco-languageserver-types": "^0.4.0",
     "monaco-marker-data-provider": "^1.0.0",
+    "monaco-tailwind": "^0.0.1",
     "monaco-types": "^0.1.0",
     "monaco-worker-manager": "^2.0.0",
     "moo": "^0.5.0",
@@ -82,5 +90,10 @@
     "@tailwindcss/language-service": {
       "postcss": "^8.0.0"
     }
-  }
+  },
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "types": "./index.d.ts"
 }

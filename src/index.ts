@@ -10,17 +10,20 @@ import {
   createMarkerDataProvider
 } from './languageFeatures.js'
 import { type TailwindcssWorker } from './tailwindcss.worker.js'
+import { PluginAPI } from 'tailwindcss/types/config.js'
 
 export const defaultLanguageSelector = ['css', 'javascript', 'html', 'mdx', 'typescript'] as const
 
 export { tailwindcssData } from './cssData.js'
 
 export const configureMonacoTailwindcss: typeof import('monaco-tailwindcss').configureMonacoTailwindcss =
-  (monaco, { languageSelector = defaultLanguageSelector, tailwindConfig } = {}) => {
+  (monaco, options) => {
+    const { languageSelector = defaultLanguageSelector, ...workerData } = options || {}
+    
     const workerManager = createWorkerManager<TailwindcssWorker, MonacoTailwindcssOptions>(monaco, {
       label: 'tailwindcss',
       moduleId: 'monaco-tailwindcss/tailwindcss.worker',
-      createData: { tailwindConfig }
+      createData: workerData
     })
 
     const disposables = [
