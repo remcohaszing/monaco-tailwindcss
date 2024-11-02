@@ -100,7 +100,7 @@ export interface MonacoTailwindcssOptions {
  * A way to call Tailwind's built-in Plugin API within the worker.
  * ``` typescript
  * 
-   // Instead of calling the functions like this...
+   // Instead of calling the functions inside your config like this...
  * const tailwindConfig = {
    // ...config
  *  plugins: [
@@ -116,12 +116,15 @@ export interface MonacoTailwindcssOptions {
     ]
  * }
 
-// ...you provide an array of the parameters for each function you want to call.
+// ...you provide an array containing the arguments
+// for each function you wish to call.
+
 // Note that the arguments you pass must be serializable,
 // e.g they can't include functions.
 
- * const tailwindConfig = {
-   // ...config
+ * const options = {
+    tailwindConfig: {...},
+    intellisense: {...},
  *  pluginAPI: {
  *    addUtilities: [
  *      {
