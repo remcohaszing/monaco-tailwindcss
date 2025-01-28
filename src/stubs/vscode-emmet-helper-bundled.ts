@@ -1,3 +1,1 @@
-export const doComplete = null
-export const extractAbbreviation = null
-export const isAbbreviationValid = null
+export * from 'vscode-emmet-helper'

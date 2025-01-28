@@ -1,1 +1,8 @@
-export const deprecate = <Fn>(fn: Fn): Fn => fn
+const td = TextDecoder;
+export { td as TextDecoder };
+
+export function deprecate() {
+  // noop
+}
+
+export default deprecate;

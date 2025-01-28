@@ -1,6 +1,6 @@
 {
   "name": "monaco-tailwindcss",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Tailwindcss integration for Monaco editor",
   "files": [
     "index.js",
@@ -36,51 +36,30 @@
   "homepage": "https://monaco-tailwindcss.js.org",
   "funding": "https://github.com/sponsors/remcohaszing",
   "dependencies": {
-    "@alloc/quick-lru": "^5.0.0",
-    "@ctrl/tinycolor": "^3.0.0",
-    "@csstools/css-parser-algorithms": "^2.0.0",
-    "@csstools/css-tokenizer": "^2.0.0",
-    "@csstools/media-query-list-parser": "^2.0.0",
-    "color-name": "^2.0.0",
-    "css.escape": "^1.0.0",
-    "culori": "^4.0.0",
-    "didyoumean": "^1.0.0",
-    "dlv": "^1.0.0",
-    "line-column": "^1.0.0",
+    "@ctrl/tinycolor": "^4.1.0",
+    "@monaco-editor/loader": "^1.4.0",
+    "@tailwindcss/language-service": "^0.14.1",
+    "@trivago/prettier-plugin-sort-imports": "^5.2.1",
+    "emmet-monaco-es": "^5.5.0",
+    "monaco-editor": "^0.52.2",
     "monaco-languageserver-types": "^0.4.0",
-    "monaco-marker-data-provider": "^1.0.0",
-    "monaco-types": "^0.1.0",
-    "monaco-worker-manager": "^2.0.0",
-    "moo": "^0.5.0",
-    "postcss": "^8.0.0",
-    "postcss-js": "^4.0.0",
-    "postcss-nested": "^6.0.0",
-    "postcss-selector-parser": "^6.0.0",
-    "semver": "^7.0.0",
-    "sift-string": "^0.0.2",
-    "stringify-object": "^5.0.0",
-    "tailwindcss": "^3.0.0",
-    "tmp-cache": "^1.0.0",
-    "vscode-languageserver-textdocument": "^1.0.0",
-    "vscode-languageserver-types": "^3.0.0"
-  },
-  "peerDependencies": {
-    "monaco-editor": ">=0.36"
+    "monaco-marker-data-provider": "^1.2.4",
+    "prettier-plugin-tailwindcss": "^0.6.10",
+    "tailwindcss": "4.0.0",
+    "vscode-emmet-helper": "^2.6.4",
+    "vscode-languageserver-textdocument": "^1.0.12"
   },
   "devDependencies": {
-    "@tailwindcss/language-service": "0.0.32",
-    "esbuild": "^0.21.0",
-    "eslint": "^8.0.0",
-    "eslint-config-remcohaszing": "^10.0.0",
-    "prettier": "^3.0.0",
-    "remark-cli": "^12.0.0",
-    "remark-preset-remcohaszing": "^3.0.0",
-    "typescript": "^5.0.0",
-    "vscode-languageserver-protocol": "^3.0.0"
+    "@eslint/js": "^9.17.0",
+    "eslint": "^9.17.0",
+    "globals": "^15.14.0",
+    "monaco-types": "^0.1.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.18.2"
   },
   "overrides": {
     "@tailwindcss/language-service": {
-      "postcss": "^8.0.0"
+      "dset": "3.1.4"
     }
   }
 }

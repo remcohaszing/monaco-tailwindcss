@@ -1,1 +1,5 @@
-export { deprecate as default } from './util.js'
+export function deprecate() {
+  // noop
+}
+
+export default deprecate;

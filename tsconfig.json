@@ -1,9 +1,7 @@
 {
-  "compilerOptions": {
-    "module": "node16",
-    "noEmit": true,
-    "strict": true,
-    "stripInternal": true,
-    "target": "esnext"
-  }
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.worker.json" }
+  ]
 }

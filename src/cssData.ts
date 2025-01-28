@@ -1,186 +1,205 @@
-import { type languages } from 'monaco-types'
+import { type languages } from 'monaco-types';
 
-function createTailwindDirective(name: string, value: string): languages.css.IAtDirectiveData {
+// Taken directly from
+// https://github.com/tailwindlabs/tailwindcss.com/blob/248a97ed1b96d646b55161582cae03c9b7bbb957/src/docs/functions-and-directives.mdx
+
+function createTailwindDirective(
+  name: string,
+  value: string,
+): languages.css.IAtDirectiveData {
   return {
     name: `@${name}`,
     description: { kind: 'markdown', value },
     references: [
       {
         name: `@${name} documentation`,
-        url: `https://tailwindcss.com/docs/functions-and-directives#${name}`
-      }
-    ]
-  }
+        url: `https://tailwindcss.com/docs/functions-and-directives#${name}-directive`,
+      },
+    ],
+  };
 }
 
-// The descriptions have been taken from
-// https://github.com/tailwindlabs/tailwindcss.com/blob/master/src/pages/docs/functions-and-directives.mdx
-
-const tailwindDirective = createTailwindDirective(
-  'tailwind',
-  `Use the \`@tailwind\` directive to insert Tailwind's \`base\`, \`components\`, \`utilities\` and \`variants\` styles into your CSS.
+const themeDirective = createTailwindDirective(
+  'theme',
+  `\
+Use the \`@theme\` directive to define your project's custom design tokens, like fonts, colors, and breakpoints:
 
 \`\`\`css
-/**
- * This injects Tailwind's base styles and any base styles registered by
- * plugins.
- */
-@tailwind base;
+@theme {
+  --font-display: "Satoshi", "sans-serif";
 
-/**
- * This injects Tailwind's component classes and any component classes
- * registered by plugins.
- */
-@tailwind components;
+  --breakpoint-3xl: 1920px;
 
-/**
- * This injects Tailwind's utility classes and any utility classes registered
- * by plugins.
- */
-@tailwind utilities;
+  --color-avocado-100: oklch(0.99 0 0);
+  --color-avocado-200: oklch(0.98 0.04 113.22);
+  --color-avocado-300: oklch(0.94 0.11 115.03);
+  --color-avocado-400: oklch(0.92 0.19 114.08);
+  --color-avocado-500: oklch(0.84 0.18 117.33);
+  --color-avocado-600: oklch(0.53 0.12 118.34);
 
-/**
- * Use this directive to control where Tailwind injects the hover, focus,
- * responsive, dark mode, and other variants of each class.
- *
- * If omitted, Tailwind will append these classes to the very end of
- * your stylesheet by default.
- */
-@tailwind variants;
-\`\`\``
-)
+  --ease-fluid: cubic-bezier(0.3, 0, 0, 1);
+  --ease-snappy: cubic-bezier(0.2, 0, 0, 1);
 
-const layerDirective = createTailwindDirective(
-  'layer',
-  `Use the \`@layer\` directive to tell Tailwind which "bucket" a set of custom styles belong to. Valid layers are \`base\`, \`components\`, and \`utilities\`.
+  /* ... */
+}
+\`\`\`
+
+Learn more about customizing your theme in the [theme variables documentation](https://tailwindcss.com/docs/theme).
+`,
+);
+
+const sourceDirective = createTailwindDirective(
+  'source',
+  `\
+Use the \`@source\` directive to explicitly specify source files that aren't picked up by Tailwind's automatic content detection:
+
+\`\`\`
+@source "../node_modules/@my-company/ui-lib";
+\`\`\`
+
+Learn more about automatic content detection in the [detecting classes in source files documentation](https://tailwindcss.com/docs/detecting-classes-in-source-files).
+`,
+);
+
+const utilityDirective = createTailwindDirective(
+  'utility',
+  `\
+Use the \`@utility\` directive to add custom utilities to your project that work with variants like \`hover\`, \`focus\` and \`lg\`:
 
 \`\`\`css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-@layer base {
-  h1 {
-    @apply text-2xl;
-  }
-  h2 {
-    @apply text-xl;
-  }
+@utility tab-4 {
+  tab-size: 4;
 }
+\`\`\`
 
-@layer components {
-  .btn-blue {
-    @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
-  }
-}
+Learn more about registering custom utilities in the [adding custom utilities documentation](https://tailwindcss.com/docs/adding-custom-styles#adding-custom-utilities).
+`,
+);
 
-@layer utilities {
-  .filter-none {
-    filter: none;
-  }
-  .filter-grayscale {
-    filter: grayscale(100%);
+const variantDirective = createTailwindDirective(
+  'variant',
+  `\
+Use the \`@variant\` directive to apply a Tailwind variant to styles in your CSS:
+
+\`\`\`css
+.my-element {
+  background: white;
+
+  @variant dark {
+    background: black;
   }
 }
 \`\`\`
 
-Tailwind will automatically move any CSS within a \`@layer\` directive to the same place as the corresponding \`@tailwind\` rule, so you don't have to worry about authoring your CSS in a specific order to avoid specificity issues.
+If you need to apply multiple variants at the same time, use nesting:
 
-Any custom CSS added to a layer will only be included in the final build if that CSS is actually used in your HTML, just like all of the classes built in to Tailwind by default.
+\`\`\`css
+.my-element {
+  background: white;
 
-Wrapping any custom CSS in a \`@layer\` directive also makes it possible to use modifiers with those rules, like \`hover:\` and \`focus:\` or responsive modifiers like \`md:\` and \`lg:\`.`
-)
+  @variant dark {
+    @variant hover {
+      background: black;
+    }
+  }
+}
+\`\`\`
+
+Learn more about variants in the [hover, focus, and other states documentation](https://tailwindcss.com/docs/hover-focus-and-other-states).
+`,
+);
+
+const customVariantDirective = createTailwindDirective(
+  'custom-variant',
+  `\
+Use the \`@custom-variant\` directive to add a custom variant in your project:
+
+\`\`\`css
+@custom-variant pointer-coarse (@media (pointer: coarse));
+@custom-variant theme-midnight (&:where([data-theme="midnight"] *));
+\`\`\`
+
+This lets you write utilities like \`pointer-coarse:size-48\` and \`theme-midnight:bg-slate-900\`.
+
+Learn more about adding custom variants in the [registering a custom variant documentation](/docs/hover-focus-and-other-states#registering-a-custom-variant).
+`,
+);
 
 const applyDirective = createTailwindDirective(
   'apply',
-  `Use \`@apply\` to inline any existing utility classes into your own custom CSS.
-
-This is useful when you need to write custom CSS (like to override the styles in a third-party library) but still want to work with your design tokens and use the same syntax you're used to using in your HTML.
+  `\
+Use the \`@apply\` directive to inline any existing utility classes into your own custom CSS:
 
 \`\`\`css
 .select2-dropdown {
   @apply rounded-b-lg shadow-md;
 }
+
 .select2-search {
-  @apply border border-gray-300 rounded;
+  @apply rounded border border-gray-300;
 }
+
 .select2-results__group {
   @apply text-lg font-bold text-gray-900;
 }
 \`\`\`
 
-Any rules inlined with \`@apply\` will have \`!important\` **removed** by default to avoid specificity issues:
+This is useful when you need to write custom CSS (like to override the styles in a third-party library) but still want to work with your design tokens and use the same syntax you’re used to using in your HTML.
+`,
+);
 
-\`\`\`css
-/* Input */
-.foo {
-  color: blue !important;
-}
+const referenceDirective = createTailwindDirective(
+  'reference',
+  `\
+If you want to use \`@apply\` or \`@variant\` in the \`<style>\` block of a Vue or Svelte component, or within CSS modules, you will need to import your theme configuration to make those values available in that context.
 
-.bar {
-  @apply foo;
-}
+To do this without duplicating the CSS variables in your CSS output, use the \`@reference\` directive instead of the \`@import\` directive when importing your theme:
 
-/* Output */
-.foo {
-  color: blue !important;
-}
+\`\`\`html
+<!-- [!code filename:HTML] -->
+<template>
+  <h1>Hello world!</h1>
+</template>
 
-.bar {
-  color: blue;
-}
+<style>
+  /* [!code highlight:2] */
+  @reference "../../my-theme.css";
+
+  h1 {
+    @apply text-2xl font-bold text-red-500;
+  }
+</style>
 \`\`\`
 
-If you'd like to \`@apply\` an existing class and make it \`!important\`, simply add \`!important\` to the end of the declaration:
+If you’re just using the default theme, you can import \`tailwindcss/theme\` directly:
 
-\`\`\`css
-/* Input */
-.btn {
-  @apply font-bold py-2 px-4 rounded !important;
-}
+\`\`\`html
+<!-- [!code filename:HTML] -->
+<template>
+  <h1>Hello world!</h1>
+</template>
 
-/* Output */
-.btn {
-  font-weight: 700 !important;
-  padding-top: .5rem !important;
-  padding-bottom: .5rem !important;
-  padding-right: 1rem !important;
-  padding-left: 1rem !important;
-  border-radius: .25rem !important;
-}
+<style>
+  /* [!code highlight:2] */
+  @reference "tailwindcss/theme";
+
+  h1 {
+    @apply text-2xl font-bold text-red-500;
+  }
+</style>
 \`\`\`
-
-Note that if you're using Sass/SCSS, you'll need to use Sass' interpolation feature to get this to work:
-
-\`\`\`css
-.btn {
-  @apply font-bold py-2 px-4 rounded #{!important};
-}
-\`\`\``
-)
-
-const configDirective = createTailwindDirective(
-  'config',
-  `Use the \`@config\` directive to specify which config file Tailwind should use when compiling CSS file. This is useful for projects that need to use different configuration files for different CSS entry points.
-
-\`\`\`css
-@config "./tailwind.site.config.js";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-\`\`\`
-
-\`\`\`css
-@config "./tailwind.admin.config.js";
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-\`\`\`
-
-The path you provide to the \`@config\` directive is relative to that CSS file, and will take precedence over a path defined in your PostCSS configuration or in the Tailwind CLI.`
-)
+`,
+);
 
 export const tailwindcssData: languages.css.CSSDataV1 = {
   version: 1.1,
-  atDirectives: [tailwindDirective, layerDirective, applyDirective, configDirective]
-}
+  atDirectives: [
+    themeDirective,
+    sourceDirective,
+    utilityDirective,
+    variantDirective,
+    customVariantDirective,
+    applyDirective,
+    referenceDirective,
+  ],
+};
