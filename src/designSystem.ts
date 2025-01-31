@@ -31,7 +31,6 @@ export async function loadDesignSystem(
 
     dependencies: () => dependencies,
 
-    // @ts-expect-error postcss stuff idk
     compile(classes: string[]): postcss.Root[] {
       const css = design.candidatesToCss(classes);
       const errors: unknown[] = [];
@@ -54,7 +53,6 @@ export async function loadDesignSystem(
       return roots;
     },
 
-    // @ts-expect-error postcss stuff idk
     toCss(nodes: postcss.Root | postcss.Node[]): string {
       return Array.isArray(nodes)
         ? postcss.root({ nodes }).toString().trim()

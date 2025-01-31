@@ -22,6 +22,6 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
+  "include": ["src", "./index.ts", "./types.d.ts"],
   "exclude": ["**/*.worker.ts"]
 }
