@@ -17,7 +17,6 @@
   - [`monaco-tailwindcss`](#monaco-tailwindcss-1)
   - [`monaco-tailwindcss/tailwindcss.worker`](#monaco-tailwindcsstailwindcssworker)
 - [Related projects](#related-projects)
-- [Showcase](#showcase)
 - [License](#license)
 
 ## Installation
@@ -145,11 +144,6 @@ Setup the Tailwindcss worker using a customized configuration.
 
 - [monaco-unified](https://monaco-unified.js.org)
 - [monaco-yaml](https://monaco-yaml.js.org)
-
-## Showcase
-
-- [Motif](https://motif.land) uses `monaco-tailwindcss` to provide Tailwindcss intellisense in their
-  MDX based content editor.
 
 ## License
 
