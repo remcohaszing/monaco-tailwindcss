@@ -41,6 +41,7 @@
     "@csstools/css-parser-algorithms": "^2.0.0",
     "@csstools/css-tokenizer": "^2.0.0",
     "@csstools/media-query-list-parser": "^2.0.0",
+    "brace-expansion": "^4.0.0",
     "color-name": "^2.0.0",
     "css.escape": "^1.0.0",
     "culori": "^4.0.0",
@@ -68,7 +69,8 @@
     "monaco-editor": ">=0.36"
   },
   "devDependencies": {
-    "@tailwindcss/language-service": "0.0.33",
+    "@tailwindcss/language-service": "0.14.2",
+    "@types/brace-expansion": "^1.0.0",
     "esbuild": "^0.21.0",
     "eslint": "^8.0.0",
     "eslint-config-remcohaszing": "^10.0.0",

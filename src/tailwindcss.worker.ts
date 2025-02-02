@@ -122,6 +122,7 @@ async function stateFromConfig(
               invalidScreen: 'error',
               invalidVariant: 'error',
               invalidConfigPath: 'error',
+              invalidSourceDirective: 'warning',
               invalidTailwindDirective: 'error',
               recommendedVariantOrder: 'warning'
             },
