@@ -4,6 +4,6 @@
     "noEmit": true,
     "strict": true,
     "stripInternal": true,
-    "target": "esnext"
+    "target": "es2024"
   }
 }

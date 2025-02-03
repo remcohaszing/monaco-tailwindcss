@@ -11,8 +11,8 @@
     "@tailwindcss/line-clamp": "^0.4.0",
     "@tailwindcss/typography": "^0.5.0",
     "@fortawesome/fontawesome-free": "^6.0.0",
-    "css-loader": "^6.0.0",
-    "css-minimizer-webpack-plugin": "^5.0.0",
+    "css-loader": "^7.0.0",
+    "css-minimizer-webpack-plugin": "^7.0.0",
     "html-webpack-plugin": "^5.0.0",
     "jsonc-parser": "^3.0.0",
     "mini-css-extract-plugin": "^2.0.0",
@@ -20,7 +20,7 @@
     "monaco-tailwindcss": "file:../..",
     "ts-loader": "^9.0.0",
     "webpack": "^5.0.0",
-    "webpack-cli": "^5.0.0",
-    "webpack-dev-server": "^4.0.0"
+    "webpack-cli": "^6.0.0",
+    "webpack-dev-server": "^5.0.0"
   }
 }
