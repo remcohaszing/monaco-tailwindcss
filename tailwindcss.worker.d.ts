@@ -10,10 +10,10 @@ export interface TailwindWorkerOptions {
    * @returns
    *   A valid Tailwind configuration.
    */
-  prepareTailwindConfig?: (tailwindConfig?: TailwindConfig | string) => Config | PromiseLike<Config>
+  prepareTailwindConfig?: (tailwindConfig?: string | TailwindConfig) => Config | PromiseLike<Config>
 }
 
 /**
  * Setup the Tailwindcss worker using a customized configuration.
  */
-export function initialize(options?: TailwindWorkerOptions): void
+export function initialize(options?: TailwindWorkerOptions): undefined

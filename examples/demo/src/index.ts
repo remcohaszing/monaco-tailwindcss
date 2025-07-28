@@ -1,3 +1,5 @@
+import './index.css'
+
 import { parse } from 'jsonc-parser'
 import * as monaco from 'monaco-editor'
 import {
@@ -5,8 +7,6 @@ import {
   type TailwindConfig,
   tailwindcssData
 } from 'monaco-tailwindcss'
-
-import './index.css'
 
 const tailwindConfig: TailwindConfig = {
   theme: {
@@ -215,7 +215,7 @@ cssModel.onDidChangeContent(generateOutput)
 htmlModel.onDidChangeContent(generateOutput)
 mdxModel.onDidChangeContent(generateOutput)
 
-function updateMarkers(resource: monaco.Uri): void {
+function updateMarkers(resource: monaco.Uri): undefined {
   const problems = document.getElementById('problems')!
   const markers = monaco.editor.getModelMarkers({ resource })
   while (problems.lastChild) {

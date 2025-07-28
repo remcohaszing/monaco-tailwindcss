@@ -10,7 +10,7 @@ import {
   resolveCompletionItem
 } from '@tailwindcss/language-service'
 import { type MonacoTailwindcssOptions, type TailwindConfig } from 'monaco-tailwindcss'
-import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker'
+import { type TailwindWorkerOptions } from 'monaco-tailwindcss/tailwindcss.worker.js'
 import { initialize as initializeWorker } from 'monaco-worker-manager/worker'
 import postcss from 'postcss'
 import postcssSelectorParser from 'postcss-selector-parser'
@@ -152,7 +152,7 @@ async function stateFromConfig(
   return state
 }
 
-export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): void {
+export function initialize(tailwindWorkerOptions?: TailwindWorkerOptions): undefined {
   initializeWorker<TailwindcssWorker, MonacoTailwindcssOptions>((ctx, options) => {
     const preparedTailwindConfig =
       tailwindWorkerOptions?.prepareTailwindConfig?.(options.tailwindConfig) ??

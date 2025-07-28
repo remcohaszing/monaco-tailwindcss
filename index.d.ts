@@ -18,7 +18,7 @@ export interface MonacoTailwindcssOptions {
    * This may be either the Tailwind configuration object, or a string that gets processed in the
    * worker.
    */
-  tailwindConfig?: TailwindConfig | string
+  tailwindConfig?: string | TailwindConfig
 }
 
 /**
@@ -38,7 +38,7 @@ export interface MonacoTailwindcss extends IDisposable {
    * @param tailwindConfig
    *   The new Tailwind configuration.
    */
-  setTailwindConfig: (tailwindConfig: TailwindConfig | string) => void
+  setTailwindConfig: (tailwindConfig: string | TailwindConfig) => undefined
 
   /**
    * Generate styles using Tailwindcss.

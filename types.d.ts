@@ -4,11 +4,11 @@ declare module '*.css' {
 }
 
 declare module 'tailwindcss/src/lib/expandApplyAtRules.js' {
-  export default function expandApplyAtRules(): void
+  export default function expandApplyAtRules(): undefined
 }
 
 declare module 'tailwindcss/src/lib/generateRules.js' {
-  export function generateRules(): void
+  export function generateRules(): undefined
 }
 
 declare module 'tailwindcss/src/lib/setupContextUtils.js' {
@@ -23,7 +23,7 @@ declare module 'tailwindcss/src/lib/setupContextUtils.js' {
   export interface JitContext {
     changedContent: ChangedContent[]
     getClassList: () => string[]
-    getVariants: () => Variant[] | undefined
+    getVariants: () => undefined | Variant[]
     tailwindConfig: Config
   }
 
@@ -50,6 +50,7 @@ declare module 'tailwindcss/src/processTailwindFeatures.js' {
 
 declare module 'tailwindcss/src/public/resolve-config.js' {
   import { type TailwindConfig } from 'monaco-tailwindcss'
+  // eslint-disable-next-line no-duplicate-imports
   import { type Config } from 'tailwindcss'
 
   export default function resolveConfig(tailwindConfig: TailwindConfig): Config
