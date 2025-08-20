@@ -1,8 +1,0 @@
-[build]
-publish = 'examples/demo/dist/'
-command = 'npm run prepack && npm --workspace demo run build'
-
-[[headers]]
-  for = '/*'
-  [headers.values]
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline'"

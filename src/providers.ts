@@ -1,5 +1,5 @@
 import type * as m from 'monaco-editor';
-import type { callWorker } from './TailwindHandler';
+import type { getWorker } from './TailwindHandler';
 import { fromRatio, names as namedColors } from '@ctrl/tinycolor';
 import {
   fromPosition,
@@ -10,7 +10,7 @@ import {
 } from 'monaco-languageserver-types';
 import { MarkerDataProvider } from 'monaco-marker-data-provider';
 
-type CallWorkerType = typeof callWorker;
+type GetWorkerType = typeof getWorker;
 
 const colorNames = Object.values(namedColors);
 
@@ -44,7 +44,7 @@ export function createColorClass(color: m.languages.IColor): string {
 
 export function createColorProvider(
   monaco: typeof m,
-  callWorker: CallWorkerType,
+  getWorker: GetWorkerType,
 ): m.languages.DocumentColorProvider {
   const modelMap = new WeakMap<m.editor.ITextModel, string[]>();
 
@@ -54,17 +54,9 @@ export function createColorProvider(
 
   return {
     async provideDocumentColors(model) {
-      const colors = await callWorker('getDocumentColors', {
-        uri: model.uri.toString(),
-        languageId: model.getLanguageId(),
-        mirrorModels: [
-          {
-            uri: model.uri.toJSON(),
-            version: model.getVersionId(),
-            value: model.getValue(),
-          },
-        ],
-      });
+      const colors = await (
+        await getWorker(model.uri)
+      ).getDocumentColors(model.uri.toString(), model.getLanguageId());
 
       const editableColors: m.languages.IColorInformation[] = [];
       const nonEditableColors: m.editor.IModelDeltaDecoration[] = [];
@@ -142,22 +134,17 @@ export function createColorProvider(
 }
 
 export function createHoverProvider(
-  callWorker: CallWorkerType,
+  getWorker: GetWorkerType,
 ): m.languages.HoverProvider {
   return {
     async provideHover(model, position) {
-      const hover = await callWorker('doHover', {
-        uri: model.uri.toString(),
-        languageId: model.getLanguageId(),
-        position: fromPosition(position),
-        mirrorModels: [
-          {
-            uri: model.uri.toJSON(),
-            version: model.getVersionId(),
-            value: model.getValue(),
-          },
-        ],
-      });
+      const hover = await (
+        await getWorker(model.uri)
+      ).doHover(
+        model.uri.toString(),
+        model.getLanguageId(),
+        fromPosition(position),
+      );
 
       return hover && toHover(hover);
     },
@@ -165,26 +152,21 @@ export function createHoverProvider(
 }
 
 export function createCodeActionProvider(
-  callWorker: CallWorkerType,
+  getWorker: GetWorkerType,
 ): m.languages.CodeActionProvider {
   return {
     async provideCodeActions(model, range, context) {
-      const codeActions = await callWorker('doCodeActions', {
-        uri: model.uri.toString(),
-        range: {
+      const codeActions = await (
+        await getWorker(model.uri)
+      ).doCodeActions(
+        model.uri.toString(),
+        model.getLanguageId(),
+        {
           start: fromPosition(range.getStartPosition()),
           end: fromPosition(range.getEndPosition()),
-        },
+        } as unknown as import('vscode-languageserver-protocol').Range,
         context,
-        languageId: model.getLanguageId(),
-        mirrorModels: [
-          {
-            uri: model.uri.toJSON(),
-            version: model.getVersionId(),
-            value: model.getValue(),
-          },
-        ],
-      });
+      );
 
       if (codeActions) {
         return {
@@ -199,22 +181,14 @@ export function createCodeActionProvider(
 }
 
 export function createMarkerDataProvider(
-  callWorker: CallWorkerType,
+  getWorker: GetWorkerType,
 ): MarkerDataProvider {
   return {
     owner: 'tailwindcss',
     async provideMarkerData(model) {
-      const diagnostics = await callWorker('doValidate', {
-        uri: model.uri.toString(),
-        languageId: model.getLanguageId(),
-        mirrorModels: [
-          {
-            uri: model.uri.toJSON(),
-            version: model.getVersionId(),
-            value: model.getValue(),
-          },
-        ],
-      });
+      const diagnostics = await (
+        await getWorker(model.uri)
+      ).doValidate(model.uri.toString(), model.getLanguageId());
 
       return diagnostics?.map(toMarkerData);
     },

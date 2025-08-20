@@ -1,4 +1,3 @@
-/// <reference types="vite/client" />
 /// <reference types="./monaco-uri.d.ts" />
 import type * as m from 'monaco-editor';
 import * as tailwindcss from 'tailwindcss';
@@ -8,6 +7,7 @@ import { getVariants } from './getVariants';
 import {
   type AugmentedDiagnostic,
   EditorState,
+  Settings,
   State,
   doCodeActions,
   doComplete,
@@ -18,11 +18,12 @@ import {
   resolveCompletionItem,
 } from '@tailwindcss/language-service';
 import { DesignSystem } from '@tailwindcss/language-service/dist/util/v4';
-import { URI } from 'monaco-editor/esm/vs/base/common/uri.js';
-import index from 'tailwindcss/index.css?raw';
-import preflight from 'tailwindcss/preflight.css?raw';
-import theme from 'tailwindcss/theme.css?raw';
-import utilities from 'tailwindcss/utilities.css?raw';
+import { initialize } from 'monaco-worker-manager/worker';
+// We no longer manually marshal mirror models / messages; rely on Monaco worker context.
+import index from 'tailwindcss/index.css' with { type: 'text' };
+import preflight from 'tailwindcss/preflight.css' with { type: 'text' };
+import theme from 'tailwindcss/theme.css' with { type: 'text' };
+import utilities from 'tailwindcss/utilities.css' with { type: 'text' };
 import {
   type CodeAction,
   type ColorInformation,
@@ -37,80 +38,56 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 
 type CompletionItem = m.languages.CompletionItem;
 
-type MirrorModelThing = {
-  uri: m.UriComponents;
-  version: number;
-  value: string;
-};
-
-type Promisified<T> = {
-  [P in keyof T]: T[P] extends (arg: infer A) => infer R
-    ? (arg: A) => Promise<R>
-    : T[P];
-};
-
-type WithMirrorModelArg<T> = {
-  [P in keyof T]: T[P] extends (arg: infer A) => infer R
-    ? (
-        arg: A & { mirrorModels?: MirrorModelThing[] },
-      ) => R extends Promise<unknown> ? R : Promise<R>
-    : T[P];
-};
+// Utility types from the previous custom messaging layer are no longer needed.
+// We keep a lightweight Promisified variant purely for the worker proxy typing.
+// All worker methods return Promises directly (Monaco will await proxy calls), so no extra Promisified wrapper needed.
 
 export interface TailwindcssWorker {
-  doCodeActions: (a: {
-    uri: string;
-    languageId: string;
-    range: Range;
-    context: m.languages.CodeActionContext;
-  }) => CodeAction[] | undefined;
-
-  doComplete: (a: {
-    uri: string;
-    languageId: string;
-    position: Position;
-    context: CompletionContext;
-  }) => CompletionList | undefined;
-
-  doHover: (a: {
-    uri: string;
-    languageId: string;
-    position: Position;
-  }) => Hover | undefined;
-
-  doValidate: (a: {
-    uri: string;
-    languageId: string;
-  }) => AugmentedDiagnostic[] | undefined;
-
-  buildCss: (a: { css: string; classes: string[] }) => CssCompilerResult;
-
-  getDocumentColors: (a: {
-    uri: string;
-    languageId: string;
-  }) => ColorInformation[] | undefined;
-
-  resolveCompletionItem: (a: { item: CompletionItem }) => CompletionItem;
+  doCodeActions: (
+    uri: string,
+    languageId: string,
+    range: Range,
+    context: m.languages.CodeActionContext,
+  ) => Promise<CodeAction[] | undefined>;
+  doComplete: (
+    uri: string,
+    languageId: string,
+    position: Position,
+    context: CompletionContext,
+  ) => Promise<CompletionList | undefined>;
+  doHover: (
+    uri: string,
+    languageId: string,
+    position: Position,
+  ) => Promise<Hover | undefined>;
+  doValidate: (
+    uri: string,
+    languageId: string,
+  ) => Promise<AugmentedDiagnostic[] | undefined>;
+  buildCss: (
+    css: string,
+    files: Record<string, string>,
+    classes: string[],
+  ) => Promise<CssCompilerResult>;
+  getDocumentColors: (
+    uri: string,
+    languageId: string,
+  ) => Promise<ColorInformation[] | undefined>;
+  resolveCompletionItem: (item: CompletionItem) => Promise<CompletionItem>;
 }
 
-export type TailwindcssWorkerWithMirrorModel =
-  WithMirrorModelArg<TailwindcssWorker>;
+export type RealTailwindcssWorker = TailwindcssWorker;
 
-export type RealTailwindcssWorker = Promisified<
-  WithMirrorModelArg<TailwindcssWorker>
->;
-
-class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
-  // public ctx: m.worker.IWorkerContext | null = null;
-  public mirrorModels: m.worker.IMirrorModel[] = [];
+class TailwindcssWorkerImpl implements TailwindcssWorker {
+  private ctx: m.worker.IWorkerContext | null = null;
   private cachedState: State | null = null;
   private cachedStateDS: DesignSystem | null = null;
 
-  setMirrorModels(models: m.worker.IMirrorModel[]): void {
-    this.mirrorModels = models;
+  setContext(ctx: m.worker.IWorkerContext) {
+    this.ctx = ctx;
   }
 
-  async getState(): Promise<State> {
+  getState(): State {
     if (!designSystem) {
       throw new Error('Design system is not initialized');
     }
@@ -129,7 +106,7 @@ class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
           diagnosticRelatedInformation: true,
           itemDefaults: [],
         },
-        async getConfiguration() {
+        async getConfiguration(): Promise<Settings> {
           return {
             editor: { tabSize: 2 },
             // Default values are based on
@@ -154,6 +131,7 @@ class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
                 invalidTailwindDirective: 'error',
                 invalidSourceDirective: 'error',
                 recommendedVariantOrder: 'warning',
+                usedBlocklistedClass: 'warning',
               },
               experimental: {
                 classRegex: [],
@@ -162,6 +140,9 @@ class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
               files: {
                 exclude: [],
               },
+              classFunctions: [],
+              inspectPort: null,
+              codeLens: false,
             },
           };
         },
@@ -171,6 +152,7 @@ class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
         },
         // This option takes some properties that we don’t have nor need.
       } as Partial<EditorState> as EditorState,
+      features: [],
       designSystem,
       separator: ':',
       blocklist: [],
@@ -206,32 +188,19 @@ class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
   }
 
   getModel(uri: string): m.worker.IMirrorModel | undefined {
-    if (this.mirrorModels.length === 0) {
-      throw new Error('Mirror models are not initialized');
-    }
-    return this.mirrorModels.find(model => String(model.uri) === uri);
-    //   if (!this.ctx) {
-    //     throw new Error('Worker context is not initialized');
-    //   }
-    //   return this.ctx
-    //     .getMirrorModels()
-    //     .find(model => String(model.uri) === uri) as m.worker.IMirrorModel;
+    if (!this.ctx) throw new Error('Worker context is not set');
+    return this.ctx.getMirrorModels().find(model => String(model.uri) === uri);
   }
 
-  async doCodeActions({
-    uri,
-    languageId,
-    range,
-    context,
-  }: {
-    uri: string;
-    languageId: string;
-    range: Range;
-    context: m.languages.CodeActionContext;
-  }): Promise<CodeAction[] | undefined> {
+  async doCodeActions(
+    uri: string,
+    languageId: string,
+    range: Range,
+    context: m.languages.CodeActionContext,
+  ): Promise<CodeAction[] | undefined> {
     const textDocument = this.getDocument(uri, languageId, this.getModel(uri)!);
     return doCodeActions(
-      await this.getState(),
+      this.getState(),
       {
         range,
         context: {
@@ -245,76 +214,66 @@ class TailwindcssWorkerImpl implements Promisified<TailwindcssWorker> {
     );
   }
 
-  async doComplete({
-    uri,
-    languageId,
-    position,
-    context,
-  }: {
-    uri: string;
-    languageId: string;
-    position: Position;
-    context: CompletionContext;
-  }): Promise<CompletionList | undefined> {
+  async doComplete(
+    uri: string,
+    languageId: string,
+    position: Position,
+    context: CompletionContext,
+  ): Promise<CompletionList | undefined> {
     return doComplete(
-      await this.getState(),
+      this.getState(),
       this.getDocument(uri, languageId, this.getModel(uri)!),
       position,
       context,
     );
   }
 
-  async doHover({
-    uri,
-    languageId,
-    position,
-  }: {
-    uri: string;
-    languageId: string;
-    position: Position;
-  }) {
+  async doHover(
+    uri: string,
+    languageId: string,
+    position: Position,
+  ): Promise<Hover | undefined> {
     return doHover(
-      await this.getState(),
+      this.getState(),
       this.getDocument(uri, languageId, this.getModel(uri)!),
       position,
     );
   }
 
-  async doValidate({ uri, languageId }: { uri: string; languageId: string }) {
+  async doValidate(uri: string, languageId: string) {
     return doValidate(
-      await this.getState(),
+      this.getState(),
       this.getDocument(uri, languageId, this.getModel(uri)!),
     );
   }
 
-  async getDocumentColors({
-    uri,
-    languageId,
-  }: {
-    uri: string;
-    languageId: string;
-  }): Promise<ColorInformation[] | undefined> {
+  async getDocumentColors(
+    uri: string,
+    languageId: string,
+  ): Promise<ColorInformation[] | undefined> {
     return getDocumentColors(
-      await this.getState(),
+      this.getState(),
       this.getDocument(uri, languageId, this.getModel(uri)!),
     );
   }
 
-  async resolveCompletionItem({
-    item,
-  }: {
-    item: CompletionItem;
-  }): Promise<CompletionItem> {
+  async resolveCompletionItem(item: CompletionItem): Promise<CompletionItem> {
     return resolveCompletionItem(
-      await this.getState(),
-      item as VSCompletionItem,
-    ) as Promise<CompletionItem>;
+      this.getState(),
+      item as unknown as VSCompletionItem,
+    ).then(a => a) as Promise<CompletionItem>;
   }
 
-  async buildCss({ css, classes }: { css: string; classes: string[] }) {
+  async buildCss(
+    css: string,
+    files: Record<string, string>,
+    classes: string[],
+  ) {
+    console.log('Building CSS'); // For debugging purposes
     if (!compiler) {
       throw new Error('Tailwind CSS compiler is not initialized');
     }
+    const compileOptions = makeCompileOptions(files);
     if (css !== previousCss) {
       compiler = await tailwindcss.compile(css, compileOptions);
       loadDesignSystem(css, compileOptions).then(ds => {
@@ -347,97 +306,118 @@ let previousCss = '';
 let compiler: Awaited<ReturnType<typeof tailwindcss.compile>> | null = null;
 let designSystem: DesignSystem | null = null;
 const workerImpl = new TailwindcssWorkerImpl();
-let initialized = false;
 
-async function init() {
-  if (initialized) {
-    return workerImpl;
-  }
-  initialized = true;
-  console.log('Initializing Tailwind CSS worker');
-
+async function ensureCoreInitialized() {
+  if (compiler && designSystem) return;
+  const compileOptions = makeCompileOptions({});
   compiler = await tailwindcss.compile(
     `@import 'tailwindcss';`,
     compileOptions,
   );
-
   designSystem = await loadDesignSystem(
     `@import 'tailwindcss';`,
     compileOptions,
   );
+}
 
-  self.addEventListener<'message'>('message', async event => {
-    const { type, mirrorModels, ...payload } = event.data;
-    if (!type) {
-      console.log('Unknown payload:', payload);
-      return;
-    }
-    if (!(type in workerImpl)) {
-      throw new Error(`Unknown message type: ${type}`);
-    }
-
-    if (mirrorModels && Array.isArray(mirrorModels)) {
-      workerImpl.setMirrorModels(
-        (mirrorModels as MirrorModelThing[]).map(m => ({
-          uri: URI.from(m.uri),
-          version: m.version,
-          getValue: () => m.value,
-        })),
-      );
-    }
-
-    console.log('Received message', type, event.data);
-    const result = await workerImpl[type as keyof TailwindcssWorker](payload);
-    console.log('Sending result', type, result);
-    self.postMessage({ type, result });
-  });
-
+// Monaco calls this to instantiate the worker. Keep signature stable.
+export function create(ctx: m.worker.IWorkerContext): TailwindcssWorker {
+  workerImpl.setContext(ctx);
+  // Fire and forget initialization (state getters await lazy loaded design system)
+  ensureCoreInitialized();
   return workerImpl;
 }
 
 type CompileOptions = NonNullable<Parameters<typeof tailwindcss.compile>[1]>;
 
-const loadStylesheet: CompileOptions['loadStylesheet'] = async (id, base) => {
-  switch (id) {
-    case 'tailwindcss':
-      return {
-        base,
-        content: index,
-      };
-    case 'tailwindcss/preflight':
-    case 'tailwindcss/preflight.css':
-    case './preflight.css':
-      return {
-        base,
-        content: preflight,
-      };
-    case 'tailwindcss/theme':
-    case 'tailwindcss/theme.css':
-    case './theme.css':
-      return {
-        base,
-        content: theme,
-      };
-    case 'tailwindcss/utilities':
-    case 'tailwindcss/utilities.css':
-    case './utilities.css':
-      return {
-        base,
-        content: utilities,
-      };
-    default:
-      throw new Error(`Unexpected stylesheet request: ${id}`);
-  }
-};
+function createLoadStylesheet(
+  files: Record<string, string>,
+): CompileOptions['loadStylesheet'] {
+  return async (id, base) => {
+    switch (id) {
+      case 'tailwindcss':
+        return {
+          path: 'tailwindcss',
+          base,
+          content: index,
+        };
+      case 'tailwindcss/preflight':
+      case 'tailwindcss/preflight.css':
+      case './preflight.css':
+        return {
+          path: 'tailwindcss/preflight',
+          base,
+          content: preflight,
+        };
+      case 'tailwindcss/theme':
+      case 'tailwindcss/theme.css':
+      case './theme.css':
+        return {
+          path: 'tailwindcss/theme',
+          base,
+          content: theme,
+        };
+      case 'tailwindcss/utilities':
+      case 'tailwindcss/utilities.css':
+      case './utilities.css':
+        return {
+          path: 'tailwindcss/utilities',
+          base,
+          content: utilities,
+        };
+      default: {
+        /**
+         * Assumes `path` is a fs-like path (i.e. starts with `/`, `./`, or `../`).
+         */
+        function getAbsoluteImportPath(base: string, path: string): string {
+          // Check if the path is already absolute
+          if (path.startsWith('/')) {
+            return path;
+          }
+
+          // If the path is relative, resolve it against the importer's directory
+          if (path.startsWith('./') || path.startsWith('../')) {
+            return new URL(path, `file://${base}/`).pathname.substring(1);
+          }
+          // Otherwise, return the path as is
+          return path;
+        }
+
+        const absolutePath = getAbsoluteImportPath(base, id);
+        const file = files[absolutePath];
+        if (file) {
+          return {
+            path: absolutePath,
+            base,
+            content: file,
+          };
+        } else {
+          console.warn(
+            `File not found: ${absolutePath}. Make sure to include it in the files object.`,
+          );
+          return {
+            path: absolutePath,
+            base,
+            content: '',
+          };
+        }
+      }
+    }
+  };
+}
 
 const loadModule: CompileOptions['loadModule'] = async () => {
   throw new Error('loadModule is not supported in the worker');
 };
 
-const compileOptions: CompileOptions = {
-  base: '/',
-  loadStylesheet,
-  loadModule,
-};
+function makeCompileOptions(files: Record<string, string>): CompileOptions {
+  return {
+    base: '/',
+    loadStylesheet: createLoadStylesheet(files),
+    loadModule,
+  };
+}
 
-init();
+initialize<TailwindcssWorker>((ctx: m.worker.IWorkerContext) => {
+  return create(ctx);
+});

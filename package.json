@@ -1,71 +1,64 @@
 {
   "name": "monaco-tailwindcss",
-  "version": "0.7.0",
-  "description": "Tailwindcss integration for Monaco editor",
-  "files": [
-    "index.js",
-    "index.js.map",
-    "index.d.ts",
-    "tailwindcss.worker.js",
-    "tailwindcss.worker.js.map",
-    "tailwindcss.worker.d.ts"
-  ],
-  "type": "module",
-  "workspaces": [
-    "examples/*"
-  ],
-  "scripts": {
-    "prepack": "node build.js",
-    "start": "npm --workspace demo start"
+  "version": "0.7.0-alpha.1",
+  "author": "Remco Haszing",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/remcohaszing/monaco-tailwindcss.git"
+  },
+  "main": "dist/index.js",
+  "devDependencies": {
+    "@types/bun": "^1.2.20",
+    "typescript": "^5.8.3",
+    "typescript-standard": "^0.3.30"
+  },
+  "bugs": {
+    "url": "https://github.com/remcohaszing/monaco-tailwindcss/issues"
+  },
+  "description": "A Monaco Editor language server for Tailwind CSS",
+  "directories": {
+    "test": "test"
   },
   "exports": {
-    ".": "./index.js",
-    "./tailwindcss.worker": "./tailwindcss.worker.js",
-    "./tailwindcss.worker.js": "./tailwindcss.worker.js"
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
+    },
+    "./*": {
+      "import": "./dist/*.js",
+      "require": "./dist/*.js"
+    },
+    "./package.json": "./package.json"
   },
-  "repository": "remcohaszing/monaco-tailwindcss",
-  "keywords": [
-    "monaco",
-    "monaco-editor",
-    "tailwind",
-    "tailwindcss"
+  "files": [
+    "dist/**/*.js",
+    "dist/**/*.d.ts"
   ],
-  "author": "Remco Haszing <remcohaszing@gmail.com>",
+  "homepage": "https://github.com/remcohaszing/monaco-tailwindcss#readme",
+  "keywords": [
+    "exi",
+    "json"
+  ],
   "license": "MIT",
-  "bugs": "https://github.com/remcohaszing/monaco-tailwindcss/issues",
-  "homepage": "https://monaco-tailwindcss.js.org",
-  "funding": "https://github.com/sponsors/remcohaszing",
+  "scripts": {
+    "prebuild": "rm -rf dist && mkdir -p dist",
+    "build": "bun run typecheck && bun run compile",
+    "typecheck": "tsc --noEmit",
+    "compile": "tsc && bun build src/tailwind.worker.ts --outdir dist --target browser",
+    "dev": "bun run typecheck && bun run compile --watch",
+    "publish": "bun run build && bun publish"
+  },
   "dependencies": {
     "@ctrl/tinycolor": "^4.1.0",
-    "@monaco-editor/loader": "^1.4.0",
-    "@tailwindcss/language-service": "^0.14.1",
-    "@trivago/prettier-plugin-sort-imports": "^5.2.1",
-    "emmet-monaco-es": "^5.5.0",
+    "@tailwindcss/language-service": "^0.14.26",
     "monaco-editor": "^0.52.2",
     "monaco-languageserver-types": "^0.4.0",
     "monaco-marker-data-provider": "^1.2.4",
-    "prettier-plugin-tailwindcss": "^0.6.10",
-    "tailwindcss": "4.0.0",
-    "vscode-emmet-helper": "^2.6.4",
-    "vscode-languageserver-textdocument": "^1.0.12"
-  },
-  "devDependencies": {
-    "@eslint/js": "^9.17.0",
-    "@rollup/plugin-node-resolve": "^16.0.0",
-    "@rollup/plugin-typescript": "^12.1.2",
-    "@rollup/plugin-url": "^8.0.2",
-    "eslint": "^9.17.0",
-    "globals": "^15.14.0",
     "monaco-types": "^0.1.0",
-    "rollup": "^4.32.1",
-    "rollup-plugin-string": "^3.0.0",
-    "tslib": "^2.8.1",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.18.2"
-  },
-  "overrides": {
-    "@tailwindcss/language-service": {
-      "dset": "3.1.4"
-    }
+    "monaco-worker-manager": "^2.0.1",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^4.1.12",
+    "vscode-languageserver-protocol": "^3.17.5",
+    "vscode-languageserver-textdocument": "^1.0.12"
   }
 }
